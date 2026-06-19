@@ -4,9 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import AuthPage from './pages/AuthPage.jsx'
 import LandingPage from './pages/LandingPage.jsx'
 import PlaceholderPage from './pages/PlaceholderPage.jsx'
+import SetupPage from './pages/SetupPage.jsx'
 
 const placeholders = [
-  ['/setup', 'Preparation Bay', 'Interview Setup coming in Phase 2'],
   ['/interview', 'Live Simulation', 'Interview Room coming in Phase 2'],
   ['/results', 'Performance Data', 'Volt AI Report coming in Phase 2'],
   ['/profile', 'Candidate Profile', 'Progress Center coming in Phase 2'],
@@ -20,6 +20,14 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/setup"
+            element={
+              <ProtectedRoute>
+                <SetupPage />
+              </ProtectedRoute>
+            }
+          />
           {placeholders.map(([path, eyebrow, title]) => (
             <Route
               key={path}
