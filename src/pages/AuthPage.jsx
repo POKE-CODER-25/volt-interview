@@ -1,6 +1,6 @@
 import { AlertCircle, ArrowRight, LockKeyhole, Mail, User } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const authErrors = {
@@ -18,8 +18,22 @@ function AuthPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const { login, register } = useAuth()
+  const { currentUser, loading, login, register } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  if (loading) {
+    return (
+      <section className="access-loading" aria-live="polite">
+        <div className="access-spinner" />
+        <p>Checking Volt access...</p>
+      </section>
+    )
+  }
+
+  if (currentUser) {
+    return <Navigate to="/setup" replace />
+  }
 
   function updateField(event) {
     setForm((current) => ({
@@ -47,7 +61,7 @@ function AuthPage() {
         await login(email, form.password)
       }
 
-      navigate('/setup')
+      navigate(location.state?.from?.pathname || '/setup', { replace: true })
     } catch (authError) {
       setError(
         authErrors[authError.code] ||

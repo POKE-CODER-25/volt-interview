@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import AuthPage from './pages/AuthPage.jsx'
 import LandingPage from './pages/LandingPage.jsx'
 import PlaceholderPage from './pages/PlaceholderPage.jsx'
@@ -23,7 +24,11 @@ function App() {
             <Route
               key={path}
               path={path}
-              element={<PlaceholderPage eyebrow={eyebrow} title={title} />}
+              element={
+                <ProtectedRoute>
+                  <PlaceholderPage eyebrow={eyebrow} title={title} />
+                </ProtectedRoute>
+              }
             />
           ))}
           <Route path="*" element={<Navigate to="/" replace />} />
