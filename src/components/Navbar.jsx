@@ -1,14 +1,18 @@
-import { Zap } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
-
-const links = [
-  ['/', 'Home'],
-  ['/setup', 'Setup'],
-  ['/profile', 'Profile'],
-  ['/auth', 'Login'],
-]
+import { LogOut, Zap } from 'lucide-react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext.jsx'
 
 function Navbar() {
+  const { currentUser, loading, logout } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    await logout()
+    navigate('/')
+  }
+
+  const navClass = ({ isActive }) => `nav-link${isActive ? ' active' : ''}`
+
   return (
     <header className="navbar">
       <nav className="navbar-inner" aria-label="Main navigation">
@@ -22,18 +26,33 @@ function Navbar() {
         </NavLink>
 
         <div className="nav-links">
-          {links.map(([path, label]) => (
-            <NavLink
-              key={path}
-              to={path}
-              end={path === '/'}
-              className={({ isActive }) =>
-                `nav-link${isActive ? ' active' : ''}`
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
+          <NavLink to="/" end className={navClass}>
+            Home
+          </NavLink>
+
+          {!loading && currentUser ? (
+            <>
+              <NavLink to="/setup" className={navClass}>
+                Setup
+              </NavLink>
+              <NavLink to="/profile" className={navClass}>
+                Profile
+              </NavLink>
+              <span className="user-label" title={currentUser.email}>
+                {currentUser.displayName || currentUser.email}
+              </span>
+              <button type="button" className="logout-button" onClick={handleLogout}>
+                <LogOut size={15} />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            !loading && (
+              <NavLink to="/auth" className={navClass}>
+                Login
+              </NavLink>
+            )
+          )}
         </div>
       </nav>
     </header>
