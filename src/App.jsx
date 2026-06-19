@@ -5,10 +5,10 @@ import AuthPage from './pages/AuthPage.jsx'
 import InterviewPage from './pages/InterviewPage.jsx'
 import LandingPage from './pages/LandingPage.jsx'
 import PlaceholderPage from './pages/PlaceholderPage.jsx'
+import ResultsPage from './pages/ResultsPage.jsx'
 import SetupPage from './pages/SetupPage.jsx'
 
 const placeholders = [
-  ['/results', 'Performance Data', 'Volt AI Report coming in Phase 2'],
   ['/profile', 'Candidate Profile', 'Progress Center coming in Phase 2'],
 ]
 
@@ -33,6 +33,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <InterviewPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/results"
+            element={
+              <ProtectedRoute>
+                <ResultsPage />
               </ProtectedRoute>
             }
           />
