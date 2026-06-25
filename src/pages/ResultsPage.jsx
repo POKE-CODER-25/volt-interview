@@ -31,6 +31,18 @@ const masteries = [
   ['Ms. Mari Mastery', 'Level 3', '+150 XP'],
 ]
 
+const categoryAdvice = {
+  Communication: 'Use a simple structure: context, action, result.',
+  Confidence: 'Replace unsure language with clear ownership statements.',
+  'Technical Depth':
+    'Add tools, architecture, and implementation details to technical answers.',
+  'Problem Solving': 'Mention challenges, solutions, and outcomes.',
+  'Project Ownership':
+    'Clearly explain what you personally built and contributed.',
+  Completeness:
+    'Answer every question with a complete explanation instead of one-word responses.',
+}
+
 function clampScore(score) {
   return Math.max(0, Math.min(100, Math.round(score)))
 }
@@ -65,6 +77,36 @@ function getHiringRecommendation(score) {
   return 'Not Yet Ready'
 }
 
+function getCategoryPhrase(category) {
+  return category.toLowerCase()
+}
+
+function getRecruiterImpression(overallScore, strongestCategory, weakestCategory) {
+  const strength = getCategoryPhrase(strongestCategory[0])
+  const weakness = getCategoryPhrase(weakestCategory[0])
+
+  if (overallScore >= 85) {
+    return `You gave a strong interview with clear evidence of ${strength}. Your ${weakness} is the main area to refine, but the overall signal is strong for an internship-level role.`
+  }
+
+  if (overallScore >= 70) {
+    return `You showed solid interview readiness, especially in ${strength}. To make the report stronger, add more evidence around ${weakness} with specific implementation details and measurable outcomes.`
+  }
+
+  if (overallScore >= 50) {
+    return `You have some useful signals, but the interview needs more complete and specific answers. Your strongest area was ${strength}, while ${weakness} needs focused practice before this would feel recruiter-ready.`
+  }
+
+  return `Your answers were too brief to create a strong recruiter signal. Start by improving ${weakness}, then support each answer with examples, ownership, challenges, solutions, and outcomes.`
+}
+
+function getPracticePlan(scoreBreakdown) {
+  return [...scoreBreakdown]
+    .sort((first, second) => first[1] - second[1])
+    .slice(0, 3)
+    .map(([category]) => categoryAdvice[category])
+}
+
 function getReport(session) {
   const evaluatedAnswers = session.answers.filter((item) => item.evaluation)
   if (!evaluatedAnswers.length) return null
@@ -87,10 +129,21 @@ function getReport(session) {
     current[1] < worst[1] ? current : worst,
   )
   const recommendation = getHiringRecommendation(overallScore)
+  const practicePlan = getPracticePlan(scoreBreakdown)
+  const recruiterImpression = getRecruiterImpression(
+    overallScore,
+    highestCategory,
+    lowestCategory,
+  )
 
   return {
     overallScore,
     scoreBreakdown,
+    recommendation,
+    recruiterImpression,
+    biggestStrength: `${highestCategory[0]} (${highestCategory[1]}/100)`,
+    biggestGrowthArea: `${lowestCategory[0]} (${lowestCategory[1]}/100)`,
+    practicePlan,
     strengths: [
       `Biggest strength: ${highestCategory[0]} (${highestCategory[1]}/100)`,
       `Hiring recommendation: ${recommendation}`,
@@ -214,6 +267,20 @@ function ResultsPage() {
       </div>
 
       <section className="results-section">
+        <SectionHeading icon={Sparkles} title="Recruiter Report" />
+        <article className="glass-panel achievement-card">
+          <div className="achievement-badge">
+            <Bot size={30} />
+          </div>
+          <div>
+            <span>Hiring Recommendation</span>
+            <h3>{report.recommendation}</h3>
+            <p>{report.recruiterImpression}</p>
+          </div>
+        </article>
+      </section>
+
+      <section className="results-section">
         <SectionHeading icon={TrendingUp} title="Score Breakdown" />
         <div className="score-grid">
           {report.scoreBreakdown.map(([label, score]) => (
@@ -233,20 +300,20 @@ function ResultsPage() {
       <div className="insight-grid">
         <InsightCard
           icon={CheckCircle2}
-          title="Strengths"
-          items={report.strengths}
+          title="Biggest Strength"
+          items={[report.biggestStrength]}
           tone="success"
         />
         <InsightCard
           icon={Target}
-          title="Areas to Improve"
-          items={report.improvements}
+          title="Biggest Growth Area"
+          items={[report.biggestGrowthArea]}
           tone="warning"
         />
         <InsightCard
           icon={Sparkles}
-          title="Recommendations"
-          items={report.recommendations}
+          title="Practice Plan"
+          items={report.practicePlan}
           tone="electric"
         />
       </div>
