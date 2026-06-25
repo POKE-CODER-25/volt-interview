@@ -8,14 +8,19 @@ import {
   ShieldCheck,
   Square,
   UserRound,
+  Volume2,
+  VolumeX,
   Zap,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
+import { useTextToSpeech } from '../hooks/useTextToSpeech'
 
 const rounds = ['HR', 'Technical', 'Project', 'Evaluation']
+const interviewerVoiceLine =
+  "Good morning. Let's begin your interview. Tell me about yourself."
 
 function InterviewPage() {
   const [answer, setAnswer] = useState('')
@@ -37,9 +42,19 @@ function InterviewPage() {
       setSubmitted(false)
     },
   })
+  const {
+    supported: ttsSupported,
+    speaking: interviewerSpeaking,
+    speak: speakInterviewerLine,
+    stop: stopInterviewerVoice,
+  } = useTextToSpeech()
 
   function submitAnswer() {
     setSubmitted(true)
+  }
+
+  function playInterviewerVoice() {
+    speakInterviewerLine(interviewerVoiceLine)
   }
 
   const voiceButtonLabel = starting
@@ -95,6 +110,65 @@ function InterviewPage() {
                 “Good morning. Let&apos;s begin your interview.”
               </blockquote>
               <span className="round-badge">HR Round</span>
+              <div
+                className="answer-actions"
+                style={{ marginTop: 16, justifyContent: 'flex-start' }}
+              >
+                <button
+                  type="button"
+                  className="voice-prototype"
+                  onClick={playInterviewerVoice}
+                  disabled={!ttsSupported}
+                  style={{
+                    cursor: ttsSupported ? 'pointer' : 'not-allowed',
+                    opacity: ttsSupported ? 1 : 0.65,
+                  }}
+                >
+                  <Volume2 size={17} />
+                  Play Interviewer Voice
+                </button>
+                <button
+                  type="button"
+                  className="voice-prototype"
+                  onClick={stopInterviewerVoice}
+                  disabled={!ttsSupported || !interviewerSpeaking}
+                  style={{
+                    cursor:
+                      ttsSupported && interviewerSpeaking
+                        ? 'pointer'
+                        : 'not-allowed',
+                    opacity: ttsSupported && interviewerSpeaking ? 1 : 0.65,
+                  }}
+                >
+                  <VolumeX size={17} />
+                  Stop Voice
+                </button>
+              </div>
+              {!ttsSupported && (
+                <p
+                  role="status"
+                  style={{
+                    margin: '12px 0 0',
+                    color: '#f1b4b4',
+                    fontSize: 13,
+                  }}
+                >
+                  Text-to-speech is not supported in this browser.
+                </p>
+              )}
+              {ttsSupported && interviewerSpeaking && (
+                <p
+                  role="status"
+                  aria-live="polite"
+                  style={{
+                    margin: '12px 0 0',
+                    color: 'var(--yellow)',
+                    fontSize: 13,
+                  }}
+                >
+                  Mr. Volt is speaking...
+                </p>
+              )}
             </div>
           </motion.article>
 
