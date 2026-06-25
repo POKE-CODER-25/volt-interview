@@ -16,6 +16,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 import { useTextToSpeech } from '../hooks/useTextToSpeech'
+import { evaluateAnswer } from '../utils/evaluateAnswer'
 
 const interviewRounds = [
   {
@@ -79,7 +80,7 @@ const interviewRounds = [
 
 function InterviewPage() {
   const [answer, setAnswer] = useState('')
-  const [, setSavedAnswers] = useState([])
+  const [savedAnswers, setSavedAnswers] = useState([])
   const [submitStatus, setSubmitStatus] = useState('')
   const [voiceStatusCleared, setVoiceStatusCleared] = useState(false)
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0)
@@ -124,15 +125,24 @@ function InterviewPage() {
       return
     }
 
-    setSavedAnswers((previousAnswers) => [
-      ...previousAnswers,
-      {
-        round: currentRound.round,
-        interviewer: currentRound.interviewer,
-        question: currentQuestion,
-        answer: trimmedAnswer,
-      },
-    ])
+    const evaluation = evaluateAnswer({
+      answer: trimmedAnswer,
+      question: currentQuestion,
+      round: currentRound.round,
+    })
+
+    console.log('Answer evaluation:', evaluation)
+
+    const savedAnswer = {
+      round: currentRound.round,
+      interviewer: currentRound.interviewer,
+      question: currentQuestion,
+      answer: trimmedAnswer,
+      evaluation,
+    }
+    const nextSavedAnswers = [...savedAnswers, savedAnswer]
+
+    setSavedAnswers(nextSavedAnswers)
     setAnswer('')
     setSubmitStatus('Answer saved locally. Moving to next question.')
     setVoiceStatusCleared(true)
@@ -143,6 +153,13 @@ function InterviewPage() {
     const isLastRound = currentRoundIndex === interviewRounds.length - 1
 
     if (isLastQuestionInRound && isLastRound) {
+      sessionStorage.setItem(
+        'voltInterviewLatestSession',
+        JSON.stringify({
+          completedAt: new Date().toISOString(),
+          answers: nextSavedAnswers,
+        }),
+      )
       navigate('/results')
       return
     }

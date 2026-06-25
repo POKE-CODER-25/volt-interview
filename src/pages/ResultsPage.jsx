@@ -14,33 +14,15 @@ import {
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 
-const scoreBreakdown = [
-  ['Communication', 88],
-  ['Confidence', 81],
-  ['Technical Depth', 79],
-  ['Project Explanation', 91],
-  ['Answer Structure', 76],
-]
+const sessionStorageKey = 'voltInterviewLatestSession'
 
-const strengths = [
-  'Clear communication',
-  'Professional tone',
-  'Strong project explanation',
-  'Good confidence in HR answers',
-]
-
-const improvements = [
-  'Add more technical depth',
-  'Structure answers using STAR method',
-  'Reduce filler words',
-  'Give more measurable project impact',
-]
-
-const recommendations = [
-  'Practice React and Firebase questions',
-  'Prepare 2-minute project explanations',
-  'Add numbers and outcomes to your answers',
-  'Retake Technical Round at higher difficulty',
+const scoreCategories = [
+  ['communication', 'Communication'],
+  ['confidence', 'Confidence'],
+  ['technicalDepth', 'Technical Depth'],
+  ['problemSolving', 'Problem Solving'],
+  ['projectOwnership', 'Project Ownership'],
+  ['completeness', 'Completeness'],
 ]
 
 const masteries = [
@@ -49,8 +31,132 @@ const masteries = [
   ['Ms. Mari Mastery', 'Level 3', '+150 XP'],
 ]
 
+function clampScore(score) {
+  return Math.max(0, Math.min(100, Math.round(score)))
+}
+
+function average(values) {
+  if (!values.length) return 0
+
+  return values.reduce((total, value) => total + value, 0) / values.length
+}
+
+function getLatestSession() {
+  if (typeof window === 'undefined') return null
+
+  try {
+    const rawSession = window.sessionStorage.getItem(sessionStorageKey)
+    if (!rawSession) return null
+
+    const session = JSON.parse(rawSession)
+    if (!Array.isArray(session.answers) || !session.answers.length) return null
+
+    return session
+  } catch {
+    return null
+  }
+}
+
+function getHiringRecommendation(score) {
+  if (score >= 85) return 'Highly Recommended'
+  if (score >= 70) return 'Recommended'
+  if (score >= 50) return 'Needs Improvement'
+
+  return 'Not Yet Ready'
+}
+
+function getReport(session) {
+  const evaluatedAnswers = session.answers.filter((item) => item.evaluation)
+  if (!evaluatedAnswers.length) return null
+
+  const scoreBreakdown = scoreCategories.map(([key, label]) => [
+    label,
+    clampScore(
+      average(
+        evaluatedAnswers.map((item) => Number(item.evaluation[key]) || 0),
+      ),
+    ),
+  ])
+  const overallScore = clampScore(
+    average(evaluatedAnswers.map((item) => Number(item.evaluation.overall) || 0)),
+  )
+  const highestCategory = scoreBreakdown.reduce((best, current) =>
+    current[1] > best[1] ? current : best,
+  )
+  const lowestCategory = scoreBreakdown.reduce((worst, current) =>
+    current[1] < worst[1] ? current : worst,
+  )
+  const recommendation = getHiringRecommendation(overallScore)
+
+  return {
+    overallScore,
+    scoreBreakdown,
+    strengths: [
+      `Biggest strength: ${highestCategory[0]} (${highestCategory[1]}/100)`,
+      `Hiring recommendation: ${recommendation}`,
+      `Completed ${evaluatedAnswers.length} evaluated answers`,
+    ],
+    improvements: [
+      `Biggest improvement area: ${lowestCategory[0]} (${lowestCategory[1]}/100)`,
+      'Add specific examples, outcomes, and technical details where relevant',
+      'Use a clear structure for each answer: situation, action, and result',
+    ],
+    recommendations: [
+      recommendation,
+      highestCategory[1] >= 70
+        ? `Keep using your ${highestCategory[0].toLowerCase()} strength`
+        : `Build stronger ${highestCategory[0].toLowerCase()} evidence`,
+      lowestCategory[1] < 60
+        ? `Practice ${lowestCategory[0].toLowerCase()} before your next attempt`
+        : 'Retake the interview with more detailed examples',
+    ],
+  }
+}
+
 function ResultsPage() {
   const navigate = useNavigate()
+  const session = getLatestSession()
+  const report = session ? getReport(session) : null
+
+  if (!report) {
+    return (
+      <section className="results-page">
+        <header className="results-header">
+          <div className="eyebrow">
+            <Sparkles size={14} />
+            Prototype performance report
+          </div>
+          <h1>No Report Yet</h1>
+          <p>
+            No completed interview found yet. Complete an interview to generate
+            your Volt AI report.
+          </p>
+        </header>
+
+        <article className="glass-panel achievement-card">
+          <div className="achievement-badge">
+            <Target size={30} />
+          </div>
+          <div>
+            <span>Interview required</span>
+            <h3>Complete an interview to unlock results</h3>
+            <p>Your report will appear here after the Project round finishes.</p>
+          </div>
+        </article>
+
+        <footer className="results-actions">
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={() => navigate('/setup')}
+          >
+            <RotateCcw size={17} />
+            Start Interview
+          </button>
+        </footer>
+      </section>
+    )
+  }
 
   return (
     <section className="results-page">
@@ -96,19 +202,21 @@ function ResultsPage() {
         <article className="glass-panel overall-score-card">
           <div className="score-ring">
             <div>
-              <strong>84</strong>
+              <strong>{report.overallScore}</strong>
               <span>/ 100</span>
             </div>
           </div>
           <p>Overall Interview Score</p>
-          <span className="prototype-tag">Prototype score</span>
+          <span className="prototype-tag">
+            {getHiringRecommendation(report.overallScore)}
+          </span>
         </article>
       </div>
 
       <section className="results-section">
         <SectionHeading icon={TrendingUp} title="Score Breakdown" />
         <div className="score-grid">
-          {scoreBreakdown.map(([label, score]) => (
+          {report.scoreBreakdown.map(([label, score]) => (
             <article className="glass-panel score-card" key={label}>
               <div>
                 <p>{label}</p>
@@ -126,19 +234,19 @@ function ResultsPage() {
         <InsightCard
           icon={CheckCircle2}
           title="Strengths"
-          items={strengths}
+          items={report.strengths}
           tone="success"
         />
         <InsightCard
           icon={Target}
           title="Areas to Improve"
-          items={improvements}
+          items={report.improvements}
           tone="warning"
         />
         <InsightCard
           icon={Sparkles}
           title="Recommendations"
-          items={recommendations}
+          items={report.recommendations}
           tone="electric"
         />
       </div>
