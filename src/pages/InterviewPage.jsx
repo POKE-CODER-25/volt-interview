@@ -5,7 +5,6 @@ import {
   Mic,
   MicOff,
   Send,
-  ShieldCheck,
   Square,
   UserRound,
   Volume2,
@@ -18,14 +17,81 @@ import { useNavigate } from 'react-router-dom'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 import { useTextToSpeech } from '../hooks/useTextToSpeech'
 
-const rounds = ['HR', 'Technical', 'Project', 'Evaluation']
-const interviewerVoiceLine =
-  "Good morning. Let's begin your interview. Tell me about yourself."
+const interviewRounds = [
+  {
+    round: 'HR',
+    interviewer: 'Mr. Volt',
+    title: 'Senior HR Interviewer',
+    timer: '90s',
+    badge: 'HR Round',
+    opening: "Good morning. Let's begin your interview.",
+    firstPrompt:
+      "Good morning. Let's begin your interview. Tell me about yourself.",
+    nextPromptPrefix: 'Next question.',
+    questions: [
+      'Tell me about yourself.',
+      'Why should we hire you?',
+      'What are your strengths?',
+      'What is one weakness you are working on?',
+      'Where do you see yourself in the next two years?',
+      'Why are you interested in this role?',
+    ],
+  },
+  {
+    round: 'Technical',
+    interviewer: 'Ms. Luna',
+    title: 'Technical Interview Specialist',
+    timer: '120s',
+    badge: 'Technical Round',
+    opening: "I am Ms. Luna. Let's begin the technical round.",
+    firstPrompt:
+      "I am Ms. Luna. Let's begin the technical round. Explain the difference between frontend and backend.",
+    nextPromptPrefix: 'Next question.',
+    questions: [
+      'Explain the difference between frontend and backend.',
+      'What is React state?',
+      'What is Firebase used for?',
+      'What is the difference between authentication and authorization?',
+      'Explain what an API is.',
+      'What happens when a user submits a form in a web app?',
+    ],
+  },
+  {
+    round: 'Project',
+    interviewer: 'Ms. Mari',
+    title: 'Project Defense Specialist',
+    timer: '180s',
+    badge: 'Project Round',
+    opening: "I am Ms. Mari. Let's discuss your projects.",
+    firstPrompt:
+      "I am Ms. Mari. Let's discuss your projects. Tell me about one project you are proud of.",
+    nextPromptPrefix: 'Next question.',
+    questions: [
+      'Tell me about one project you are proud of.',
+      'What problem did that project solve?',
+      'What technologies did you use and why?',
+      'What was the hardest challenge in that project?',
+      'What would you improve if you had more time?',
+      'How would you explain this project to a recruiter?',
+    ],
+  },
+]
 
 function InterviewPage() {
   const [answer, setAnswer] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [, setSavedAnswers] = useState([])
+  const [submitStatus, setSubmitStatus] = useState('')
+  const [voiceStatusCleared, setVoiceStatusCleared] = useState(false)
+  const [currentRoundIndex, setCurrentRoundIndex] = useState(0)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const navigate = useNavigate()
+  const currentRound = interviewRounds[currentRoundIndex]
+  const currentQuestion = currentRound.questions[currentQuestionIndex]
+  const questionCount = currentRound.questions.length
+  const isFirstQuestionInRound = currentQuestionIndex === 0
+  const interviewerVoiceLine = isFirstQuestionInRound
+    ? currentRound.firstPrompt
+    : `${currentRound.nextPromptPrefix} ${currentQuestion}`
   const {
     supported: voiceSupported,
     listening,
@@ -39,7 +105,8 @@ function InterviewPage() {
       setAnswer((previousAnswer) =>
         `${previousAnswer}${previousAnswer ? ' ' : ''}${transcript}`.trim(),
       )
-      setSubmitted(false)
+      setSubmitStatus('')
+      setVoiceStatusCleared(false)
     },
   })
   const {
@@ -50,7 +117,43 @@ function InterviewPage() {
   } = useTextToSpeech()
 
   function submitAnswer() {
-    setSubmitted(true)
+    const trimmedAnswer = answer.trim()
+
+    if (!trimmedAnswer) {
+      setSubmitStatus('Please answer before continuing.')
+      return
+    }
+
+    setSavedAnswers((previousAnswers) => [
+      ...previousAnswers,
+      {
+        round: currentRound.round,
+        interviewer: currentRound.interviewer,
+        question: currentQuestion,
+        answer: trimmedAnswer,
+      },
+    ])
+    setAnswer('')
+    setSubmitStatus('Answer saved locally. Moving to next question.')
+    setVoiceStatusCleared(true)
+    if (listening) stopVoice()
+    stopInterviewerVoice()
+
+    const isLastQuestionInRound = currentQuestionIndex === questionCount - 1
+    const isLastRound = currentRoundIndex === interviewRounds.length - 1
+
+    if (isLastQuestionInRound && isLastRound) {
+      navigate('/results')
+      return
+    }
+
+    if (isLastQuestionInRound) {
+      setCurrentRoundIndex((previousIndex) => previousIndex + 1)
+      setCurrentQuestionIndex(0)
+      return
+    }
+
+    setCurrentQuestionIndex((previousIndex) => previousIndex + 1)
   }
 
   function playInterviewerVoice() {
@@ -66,15 +169,31 @@ function InterviewPage() {
   return (
     <section className="interview-page">
       <div className="round-progress" aria-label="Interview round progress">
-        {rounds.map((round, index) => (
+        {interviewRounds.map((round, index) => {
+          const isCompleted = index < currentRoundIndex
+          const isActive = index === currentRoundIndex
+          const isLocked = index > currentRoundIndex
+
+          return (
           <div
-            key={round}
-            className={`round-step${index === 0 ? ' active' : ''}`}
+            key={round.round}
+            className={`round-step${isActive ? ' active' : ''}${
+              isCompleted ? ' completed' : ''
+            }${isLocked ? ' locked' : ''}`}
+            aria-current={isActive ? 'step' : undefined}
+            aria-label={`${round.round} round ${
+              isCompleted ? 'completed' : isActive ? 'active' : 'locked'
+            }`}
+            style={{
+              opacity: isLocked ? 0.48 : 1,
+              color: isCompleted ? '#79e6b5' : undefined,
+            }}
           >
             <span>{index + 1}</span>
-            <strong>{round}</strong>
+            <strong>{round.round}</strong>
           </div>
-        ))}
+          )
+        })}
       </div>
 
       <div className="interview-layout">
@@ -104,12 +223,12 @@ function InterviewPage() {
                 <i />
                 Current interviewer
               </p>
-              <h1>Mr. Volt</h1>
-              <p className="interviewer-title">Senior HR Interviewer</p>
+              <h1>{currentRound.interviewer}</h1>
+              <p className="interviewer-title">{currentRound.title}</p>
               <blockquote>
-                “Good morning. Let&apos;s begin your interview.”
+                {interviewerVoiceLine}
               </blockquote>
-              <span className="round-badge">HR Round</span>
+              <span className="round-badge">{currentRound.badge}</span>
               <div
                 className="answer-actions"
                 style={{ marginTop: 16, justifyContent: 'flex-start' }}
@@ -166,7 +285,7 @@ function InterviewPage() {
                     fontSize: 13,
                   }}
                 >
-                  Mr. Volt is speaking...
+                  {currentRound.interviewer} is speaking...
                 </p>
               )}
             </div>
@@ -175,12 +294,14 @@ function InterviewPage() {
           <article className="glass-panel question-panel">
             <header className="question-heading">
               <div>
-                <p>Question 1 of 6</p>
-                <h2>Tell me about yourself.</h2>
+                <p>
+                  Question {currentQuestionIndex + 1} of {questionCount}
+                </p>
+                <h2>{currentQuestion}</h2>
               </div>
               <div className="prototype-timer" title="Static prototype timer">
                 <Clock3 size={18} />
-                <span>90s</span>
+                <span>{currentRound.timer}</span>
               </div>
             </header>
 
@@ -190,7 +311,7 @@ function InterviewPage() {
                 value={answer}
                 onChange={(event) => {
                   setAnswer(event.target.value)
-                  setSubmitted(false)
+                  setSubmitStatus('')
                 }}
                 placeholder="Type your answer here, or use voice input..."
                 rows={7}
@@ -281,7 +402,7 @@ function InterviewPage() {
               </p>
             )}
 
-            {!voiceError && voiceStatus && (
+            {!voiceError && voiceStatus && !submitStatus && !voiceStatusCleared && (
               <p
                 role="status"
                 aria-live="polite"
@@ -296,31 +417,23 @@ function InterviewPage() {
                 {voiceStatus}
               </p>
             )}
-          </article>
 
-          {submitted && (
-            <motion.article
-              className="glass-panel prototype-feedback"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="feedback-icon">
-                <ShieldCheck size={23} />
-              </div>
-              <div>
-                <p>Prototype Feedback</p>
-                <h3>
-                  Your answer has been received. Real evaluation will be added
-                  in Phase 3.
-                </h3>
-                <span>
-                  Follow-up preview: You mentioned your projects. What was your
-                  biggest learning?
-                </span>
-              </div>
-            </motion.article>
-          )}
+            {submitStatus && (
+              <p
+                role="status"
+                aria-live="polite"
+                style={{
+                  margin: '12px 0 0',
+                  color: submitStatus.startsWith('Answer saved')
+                    ? '#79e6b5'
+                    : '#f1b4b4',
+                  fontSize: 13,
+                }}
+              >
+                {submitStatus}
+              </p>
+            )}
+          </article>
         </main>
 
         <aside className="glass-panel session-panel">
@@ -334,7 +447,7 @@ function InterviewPage() {
 
           <dl className="session-list">
             <SessionRow label="Mode" value="Prototype Session" />
-            <SessionRow label="Round" value="HR" highlight />
+            <SessionRow label="Round" value={currentRound.round} highlight />
             <SessionRow label="Difficulty" value="Internship" />
             <SessionRow label="Input" value="Text and voice enabled" />
             <SessionRow label="Save" value="Not active in prototype" />
@@ -359,9 +472,10 @@ function InterviewPage() {
         <button
           type="button"
           className="button button-primary"
-          onClick={() => navigate('/results')}
+          disabled
+          title="Results unlock after the Project round is complete."
         >
-          Go to Results
+          Results Locked
           <ArrowRight size={17} />
         </button>
       </footer>
