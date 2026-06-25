@@ -2,15 +2,18 @@ import {
   ArrowLeft,
   ArrowRight,
   Clock3,
+  Mic,
   MicOff,
   Send,
   ShieldCheck,
+  Square,
   UserRound,
   Zap,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 
 const rounds = ['HR', 'Technical', 'Project', 'Evaluation']
 
@@ -18,10 +21,32 @@ function InterviewPage() {
   const [answer, setAnswer] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const navigate = useNavigate()
+  const {
+    supported: voiceSupported,
+    listening,
+    starting,
+    error: voiceError,
+    status: voiceStatus,
+    start: startVoice,
+    stop: stopVoice,
+  } = useSpeechRecognition({
+    onTranscript: (transcript) => {
+      setAnswer((previousAnswer) =>
+        `${previousAnswer}${previousAnswer ? ' ' : ''}${transcript}`.trim(),
+      )
+      setSubmitted(false)
+    },
+  })
 
   function submitAnswer() {
     setSubmitted(true)
   }
+
+  const voiceButtonLabel = starting
+    ? 'Listening...'
+    : listening
+      ? 'Stop Voice'
+      : 'Start Voice'
 
   return (
     <section className="interview-page">
@@ -93,16 +118,56 @@ function InterviewPage() {
                   setAnswer(event.target.value)
                   setSubmitted(false)
                 }}
-                placeholder="Type your answer here, or use voice mode in a later phase..."
+                placeholder="Type your answer here, or use voice input..."
                 rows={7}
               />
             </label>
 
             <div className="answer-actions">
-              <button type="button" className="voice-prototype" disabled>
-                <MicOff size={17} />
-                Voice Coming Soon
-              </button>
+              <motion.button
+                type="button"
+                className="voice-prototype"
+                onClick={listening ? stopVoice : startVoice}
+                disabled={!voiceSupported || starting}
+                aria-pressed={listening}
+                animate={
+                  listening
+                    ? {
+                        scale: [1, 1.035, 1],
+                        boxShadow: [
+                          '0 0 0 rgba(245,230,66,0)',
+                          '0 0 22px rgba(245,230,66,.25)',
+                          '0 0 0 rgba(245,230,66,0)',
+                        ],
+                      }
+                    : { scale: 1, boxShadow: '0 0 0 rgba(245,230,66,0)' }
+                }
+                transition={
+                  listening
+                    ? { duration: 1.25, repeat: Infinity, ease: 'easeInOut' }
+                    : { duration: 0.2 }
+                }
+                style={{
+                  cursor: voiceSupported && !starting ? 'pointer' : 'not-allowed',
+                  color: listening ? '#07101e' : '#d8e5f2',
+                  background: listening
+                    ? 'var(--yellow)'
+                    : 'rgba(255,255,255,.06)',
+                  borderColor: listening
+                    ? 'rgba(245,230,66,.75)'
+                    : 'rgba(255,255,255,.14)',
+                  opacity: voiceSupported ? 1 : 0.65,
+                }}
+              >
+                {!voiceSupported ? (
+                  <MicOff size={17} />
+                ) : listening ? (
+                  <Square size={15} fill="currentColor" />
+                ) : (
+                  <Mic size={17} />
+                )}
+                {voiceButtonLabel}
+              </motion.button>
               <button
                 type="button"
                 className="submit-answer"
@@ -112,6 +177,51 @@ function InterviewPage() {
                 Submit Answer
               </button>
             </div>
+
+            {!voiceSupported && (
+              <p
+                role="status"
+                style={{ margin: '12px 0 0', color: '#f1b4b4', fontSize: 13 }}
+              >
+                Voice input is not supported in this browser. Please use text
+                mode.
+              </p>
+            )}
+
+            {voiceSupported && (starting || listening) && (
+              <p
+                role="status"
+                aria-live="polite"
+                style={{ margin: '12px 0 0', color: 'var(--yellow)', fontSize: 13 }}
+              >
+                Listening... speak your answer now
+              </p>
+            )}
+
+            {voiceError && (
+              <p
+                role="alert"
+                style={{ margin: '12px 0 0', color: '#f1b4b4', fontSize: 13 }}
+              >
+                {voiceError}
+              </p>
+            )}
+
+            {!voiceError && voiceStatus && (
+              <p
+                role="status"
+                aria-live="polite"
+                style={{
+                  margin: '12px 0 0',
+                  color: voiceStatus.startsWith('Voice captured')
+                    ? '#79e6b5'
+                    : '#f1b4b4',
+                  fontSize: 13,
+                }}
+              >
+                {voiceStatus}
+              </p>
+            )}
           </article>
 
           {submitted && (
@@ -152,7 +262,7 @@ function InterviewPage() {
             <SessionRow label="Mode" value="Prototype Session" />
             <SessionRow label="Round" value="HR" highlight />
             <SessionRow label="Difficulty" value="Internship" />
-            <SessionRow label="Input" value="Text enabled, Voice planned" />
+            <SessionRow label="Input" value="Text and voice enabled" />
             <SessionRow label="Save" value="Not active in prototype" />
           </dl>
 
