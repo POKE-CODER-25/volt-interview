@@ -12,71 +12,23 @@ import {
   Zap,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 import { useTextToSpeech } from '../hooks/useTextToSpeech'
+import { buildInterviewQuestions } from '../utils/buildInterviewQuestions'
 import { evaluateAnswer } from '../utils/evaluateAnswer'
 
-const interviewRounds = [
-  {
-    round: 'HR',
-    interviewer: 'Mr. Volt',
-    title: 'Senior HR Interviewer',
-    timer: '90s',
-    badge: 'HR Round',
-    opening: "Good morning. Let's begin your interview.",
-    firstPrompt:
-      "Good morning. Let's begin your interview. Tell me about yourself.",
-    nextPromptPrefix: 'Next question.',
-    questions: [
-      'Tell me about yourself.',
-      'Why should we hire you?',
-      'What are your strengths?',
-      'What is one weakness you are working on?',
-      'Where do you see yourself in the next two years?',
-      'Why are you interested in this role?',
-    ],
-  },
-  {
-    round: 'Technical',
-    interviewer: 'Ms. Luna',
-    title: 'Technical Interview Specialist',
-    timer: '120s',
-    badge: 'Technical Round',
-    opening: "I am Ms. Luna. Let's begin the technical round.",
-    firstPrompt:
-      "I am Ms. Luna. Let's begin the technical round. Explain the difference between frontend and backend.",
-    nextPromptPrefix: 'Next question.',
-    questions: [
-      'Explain the difference between frontend and backend.',
-      'What is React state?',
-      'What is Firebase used for?',
-      'What is the difference between authentication and authorization?',
-      'Explain what an API is.',
-      'What happens when a user submits a form in a web app?',
-    ],
-  },
-  {
-    round: 'Project',
-    interviewer: 'Ms. Mari',
-    title: 'Project Defense Specialist',
-    timer: '180s',
-    badge: 'Project Round',
-    opening: "I am Ms. Mari. Let's discuss your projects.",
-    firstPrompt:
-      "I am Ms. Mari. Let's discuss your projects. Tell me about one project you are proud of.",
-    nextPromptPrefix: 'Next question.',
-    questions: [
-      'Tell me about one project you are proud of.',
-      'What problem did that project solve?',
-      'What technologies did you use and why?',
-      'What was the hardest challenge in that project?',
-      'What would you improve if you had more time?',
-      'How would you explain this project to a recruiter?',
-    ],
-  },
-]
+function readSessionJson(key) {
+  if (typeof window === 'undefined') return null
+
+  try {
+    const value = window.sessionStorage.getItem(key)
+    return value ? JSON.parse(value) : null
+  } catch {
+    return null
+  }
+}
 
 function InterviewPage() {
   const [answer, setAnswer] = useState('')
@@ -86,6 +38,18 @@ function InterviewPage() {
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const navigate = useNavigate()
+  const setupData = useMemo(() => readSessionJson('voltInterviewSetup'), [])
+  const confirmedContext = useMemo(
+    () => readSessionJson('voltInterviewConfirmedContext'),
+    [],
+  )
+  const interviewPlan = useMemo(() => {
+    return buildInterviewQuestions({
+      setup: setupData,
+      confirmedContext,
+    })
+  }, [confirmedContext, setupData])
+  const interviewRounds = interviewPlan.rounds
   const currentRound = interviewRounds[currentRoundIndex]
   const currentQuestion = currentRound.questions[currentQuestionIndex]
   const questionCount = currentRound.questions.length
@@ -463,9 +427,32 @@ function InterviewPage() {
           </div>
 
           <dl className="session-list">
-            <SessionRow label="Mode" value="Prototype Session" />
+            <SessionRow
+              label="Mode"
+              value={
+                interviewPlan.mode === 'resume'
+                  ? 'Resume Interview'
+                  : 'Student Interview'
+              }
+            />
             <SessionRow label="Round" value={currentRound.round} highlight />
-            <SessionRow label="Difficulty" value="Internship" />
+            {interviewPlan.mode === 'resume' && (
+              <SessionRow
+                label="Primary Focus"
+                value={interviewPlan.focus.primaryProject?.name || 'Not set'}
+              />
+            )}
+            {interviewPlan.mode === 'resume' &&
+              interviewPlan.focus.secondaryProject?.name && (
+                <SessionRow
+                  label="Secondary Focus"
+                  value={interviewPlan.focus.secondaryProject.name}
+                />
+              )}
+            <SessionRow
+              label="Difficulty"
+              value={setupData?.difficulty || 'Hard'}
+            />
             <SessionRow label="Input" value="Text and voice enabled" />
             <SessionRow label="Save" value="Not active in prototype" />
           </dl>
