@@ -169,6 +169,9 @@ export function analyzeAnswer({ answer, question, interviewContext = {} }) {
 
 export function shouldAskFollowup(answerAnalysis) {
   if (!answerAnalysis) return false
+  if (/^(no|nope|none|nothing|no idea|i don'?t know|i do not know|not sure|unsure)\b/i.test(answerAnalysis.answer)) {
+    return false
+  }
   if (answerAnalysis.technologies.length || answerAnalysis.projects.length) {
     return true
   }
@@ -201,7 +204,11 @@ export function generateFollowup(answerAnalysis, interviewContext = {}) {
   const pivotUsed = Boolean(interviewContext.roundPivotUsed?.[currentRoundKey])
   const project = firstUnusedTopic(answerAnalysis.projects, usedTopics)
   const pivotProject =
-    !pivotUsed && isDifferentFromFocus(project, interviewContext) ? project : ''
+    !pivotUsed &&
+    answerAnalysis.signals.includes('challenge') &&
+    isDifferentFromFocus(project, interviewContext)
+      ? project
+      : ''
   const technology = firstUnusedTopic(answerAnalysis.technologies, usedTopics)
   const primaryProject = interviewContext.focus?.primaryProject?.name || project
 
@@ -211,7 +218,7 @@ export function generateFollowup(answerAnalysis, interviewContext = {}) {
       topic: pivotProject,
       isPivot: true,
       question: technology
-        ? `That's interesting. You mentioned ${pivotProject} was harder. What made ${technology} and that project more challenging?`
+        ? `You mentioned ${pivotProject} was harder. What made ${technology} and that project more challenging?`
         : `You brought up ${pivotProject} as a harder project. What made it more demanding than your original focus?`,
     }
   }
@@ -224,15 +231,6 @@ export function generateFollowup(answerAnalysis, interviewContext = {}) {
       question: technology
         ? `Which part of using ${technology} required the most debugging or careful thinking?`
         : `What made ${project} difficult, and how did you work through that part?`,
-    }
-  }
-
-  if (pivotProject) {
-    return {
-      key: `pivot-${pivotProject.toLowerCase()}`,
-      topic: pivotProject,
-      isPivot: true,
-      question: `You mentioned ${pivotProject}. What made that project worth bringing up here?`,
     }
   }
 

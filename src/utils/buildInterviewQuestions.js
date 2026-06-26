@@ -78,14 +78,14 @@ function createHumanRounds({ focus = {}, resumeMode = false }) {
     `${primaryName}-${secondaryName}-${focus.skills?.join(',') || 'student'}`,
   )
   const hrIntro = resumeMode
-    ? `Good morning. I had a look at your resume before we started. I noticed your work on ${primaryName}, so I would like to understand your experience better.`
-    : 'Good morning. I would like to get a clear picture of how you think, communicate, and approach your work.'
+    ? `Good morning. I would like to understand your experience through ${primaryName} and the way you present your work.`
+    : 'Good morning. I would like to understand your background, communication style, and approach to work.'
   const technicalIntro = resumeMode
-    ? `I want to move into the technical side now. I will use ${primaryName} as the reference point for a few questions.`
-    : 'I want to move into the technical side now. Keep your answers practical and explain your reasoning.'
+    ? `We will use ${primaryName} to examine your technical decisions and implementation reasoning.`
+    : 'We will focus on practical technical reasoning, implementation choices, and tradeoffs.'
   const projectIntro = resumeMode
-    ? `I am curious about how you actually built ${primaryName}. Let us talk through the decisions behind it.`
-    : 'I am curious about your project thinking. Pick examples you know well and walk me through them clearly.'
+    ? `I am interested in how you built ${primaryName} and the choices that shaped it.`
+    : 'I am interested in your project thinking. Choose examples you know well and explain them clearly.'
 
   return [
     makeRound({
@@ -98,11 +98,11 @@ function createHumanRounds({ focus = {}, resumeMode = false }) {
       intro: hrIntro,
       transitions: [
         '',
-        'That gives me some context.',
-        'I would like to understand that from a recruiter perspective.',
+        'That gives me useful context about your profile.',
+        'I would like to understand how a recruiter should read that experience.',
         '',
-        'That is useful background.',
-        'Good. Let us make this practical.',
+        'That background helps me understand your direction.',
+        'Let us make this practical from a hiring perspective.',
       ],
       questions: [
         makeQuestion(
@@ -111,7 +111,7 @@ function createHumanRounds({ focus = {}, resumeMode = false }) {
             ? [
                 'Which project best represents your abilities as a developer?',
                 `When you look at your work so far, why does ${primaryName} stand out?`,
-                'Which part of your resume should I pay the most attention to, and why?',
+                'Which part of your work should I pay the most attention to, and why?',
               ]
             : [
                 'Tell me about yourself as a developer.',
@@ -183,11 +183,11 @@ function createHumanRounds({ focus = {}, resumeMode = false }) {
       intro: technicalIntro,
       transitions: [
         '',
-        'Now be specific about the implementation.',
-        'I want to test the reasoning behind that choice.',
+        'Be specific about the implementation details here.',
+        'I will focus on the reasoning behind that choice.',
         '',
-        'Let us move from tools to tradeoffs.',
-        'Good. Now think like you are maintaining this in production.',
+        'Now connect the tools to the tradeoffs.',
+        'Think about this as if you were maintaining it in production.',
       ],
       questions: [
         makeQuestion(
@@ -274,11 +274,11 @@ function createHumanRounds({ focus = {}, resumeMode = false }) {
       intro: projectIntro,
       transitions: [
         '',
-        'I like that direction. Let us go deeper.',
-        'That is the kind of detail I am looking for.',
+        'That direction is useful; go deeper into the project work.',
+        'Focus on the decisions and evidence behind your answer.',
         '',
         'Now think about it with hindsight.',
-        'Great. I want the recruiter version now.',
+        'Now explain it in a way a recruiter would understand.',
       ],
       questions: [
         makeQuestion(

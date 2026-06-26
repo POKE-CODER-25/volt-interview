@@ -240,7 +240,7 @@ function InterviewPage() {
         round: currentRound.round,
       }
     } catch (error) {
-      console.warn('Follow-up generation failed, continuing normally.', error)
+      console.warn('Additional prompt generation failed, continuing normally.', error)
       return null
     }
   }
@@ -274,7 +274,7 @@ function InterviewPage() {
 
     setSavedAnswers(nextSavedAnswers)
     setAnswer('')
-    setSubmitStatus('Answer saved locally. Moving to next question.')
+    setSubmitStatus('Answer saved locally.')
     setVoiceStatusCleared(true)
     if (listening) stopVoice()
     stopInterviewerVoice()
@@ -324,12 +324,12 @@ function InterviewPage() {
             : previousMemory.roundPivotUsed,
         }
 
-        console.log('Generated follow-up:', followup.question)
+        console.log('Generated interview prompt:', followup.question)
         console.log('Interview memory:', nextMemory)
 
         return nextMemory
       })
-      setSubmitStatus('Answer saved locally. Asking one follow-up.')
+      setSubmitStatus('Answer saved locally.')
       return
     }
 
