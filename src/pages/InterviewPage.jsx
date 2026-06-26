@@ -17,6 +17,11 @@ import { useNavigate } from 'react-router-dom'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 import { useTextToSpeech } from '../hooks/useTextToSpeech'
 import {
+  analyzeAnswer,
+  generateFollowup,
+  shouldAskFollowup,
+} from '../utils/answerAnalyzer'
+import {
   buildInterviewQuestions,
   getInterviewerLine,
   getQuestionText,
@@ -42,10 +47,27 @@ function InterviewPage() {
   const [voiceStatusCleared, setVoiceStatusCleared] = useState(false)
   const [currentRoundIndex, setCurrentRoundIndex] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [activeFollowup, setActiveFollowup] = useState(null)
+  const [askedFollowupKeys, setAskedFollowupKeys] = useState([])
+  const [usedFollowupTopics, setUsedFollowupTopics] = useState([])
+  const [interviewMemory, setInterviewMemory] = useState({
+    mentionedProjects: [],
+    mentionedTechnologies: [],
+    challenges: [],
+    achievements: [],
+    primaryFocus: '',
+    secondaryFocus: '',
+    askedFollowups: [],
+    roundPivotUsed: {},
+  })
   const navigate = useNavigate()
   const setupData = useMemo(() => readSessionJson('voltInterviewSetup'), [])
   const confirmedContext = useMemo(
     () => readSessionJson('voltInterviewConfirmedContext'),
+    [],
+  )
+  const parsedResume = useMemo(
+    () => readSessionJson('voltInterviewParsedResume'),
     [],
   )
   const interviewPlan = useMemo(() => {
@@ -58,16 +80,15 @@ function InterviewPage() {
   const interviewRounds = interviewPlan.rounds
   const currentRound = interviewRounds[currentRoundIndex]
   const currentQuestion = currentRound.questions[currentQuestionIndex]
-  const currentQuestionText = getQuestionText(currentQuestion)
-  const interviewerDialogue = getInterviewerLine(
-    currentRound,
-    currentQuestionIndex,
-  )
+  const plannedQuestionText = getQuestionText(currentQuestion)
+  const currentQuestionText = activeFollowup?.question || plannedQuestionText
+  const interviewerDialogue =
+    activeFollowup?.dialogue ||
+    getInterviewerLine(currentRound, currentQuestionIndex)
   const questionCount = currentRound.questions.length
-  const interviewerVoiceLine = getSpokenPrompt(
-    currentRound,
-    currentQuestionIndex,
-  )
+  const interviewerVoiceLine = activeFollowup
+    ? [activeFollowup.dialogue, activeFollowup.question].filter(Boolean).join(' ')
+    : getSpokenPrompt(currentRound, currentQuestionIndex)
   const {
     supported: voiceSupported,
     listening,
@@ -92,6 +113,95 @@ function InterviewPage() {
     stop: stopInterviewerVoice,
   } = useTextToSpeech()
 
+  function uniqueValues(values) {
+    return [...new Set(values.filter(Boolean).map((value) => String(value).trim()))]
+  }
+
+  function moveToNextPlannedQuestion() {
+    const isLastQuestionInRound = currentQuestionIndex === questionCount - 1
+    const isLastRound = currentRoundIndex === interviewRounds.length - 1
+
+    if (isLastQuestionInRound && isLastRound) return false
+
+    if (isLastQuestionInRound) {
+      setCurrentRoundIndex((previousIndex) => previousIndex + 1)
+      setCurrentQuestionIndex(0)
+      return true
+    }
+
+    setCurrentQuestionIndex((previousIndex) => previousIndex + 1)
+    return true
+  }
+
+  function maybeBuildFollowup(trimmedAnswer) {
+    const mainQuestionKey = `${currentRound.key}-${currentQuestionIndex}`
+    if (askedFollowupKeys.includes(mainQuestionKey)) return null
+
+    try {
+      const answerAnalysis = analyzeAnswer({
+        answer: trimmedAnswer,
+        question: plannedQuestionText,
+        interviewContext: {
+          mode: interviewPlan.mode,
+          focus: interviewFocus,
+          confirmedContext,
+          parsedResume,
+        },
+      })
+
+      setInterviewMemory((previousMemory) => ({
+        ...previousMemory,
+        mentionedProjects: uniqueValues([
+          ...previousMemory.mentionedProjects,
+          ...answerAnalysis.projects,
+        ]),
+        mentionedTechnologies: uniqueValues([
+          ...previousMemory.mentionedTechnologies,
+          ...answerAnalysis.technologies,
+        ]),
+        challenges: answerAnalysis.signals.includes('challenge')
+          ? uniqueValues([...previousMemory.challenges, plannedQuestionText])
+          : previousMemory.challenges,
+        achievements: answerAnalysis.signals.includes('success')
+          ? uniqueValues([...previousMemory.achievements, plannedQuestionText])
+          : previousMemory.achievements,
+        primaryFocus:
+          previousMemory.primaryFocus || interviewFocus.primaryProject?.name || '',
+        secondaryFocus:
+          previousMemory.secondaryFocus ||
+          interviewFocus.secondaryProject?.name ||
+          '',
+      }))
+
+      if (!shouldAskFollowup(answerAnalysis)) return null
+
+      const followup = generateFollowup(answerAnalysis, {
+        mode: interviewPlan.mode,
+        focus: interviewFocus,
+        confirmedContext,
+        parsedResume,
+        usedFollowupTopics,
+        currentRoundKey: currentRound.key,
+        roundPivotUsed: interviewMemory.roundPivotUsed,
+      })
+
+      if (!followup || askedFollowupKeys.includes(followup.key)) return null
+
+      return {
+        ...followup,
+        mainQuestionKey,
+        parentQuestion: plannedQuestionText,
+        dialogue: followup.isPivot
+          ? "That's interesting. I want to follow that thread for a moment."
+          : 'I want to stay with that for a moment.',
+        round: currentRound.round,
+      }
+    } catch (error) {
+      console.warn('Follow-up generation failed, continuing normally.', error)
+      return null
+    }
+  }
+
   function submitAnswer() {
     const trimmedAnswer = answer.trim()
 
@@ -114,6 +224,8 @@ function InterviewPage() {
       question: currentQuestionText,
       answer: trimmedAnswer,
       evaluation,
+      isFollowup: Boolean(activeFollowup),
+      parentQuestion: activeFollowup?.parentQuestion || null,
     }
     const nextSavedAnswers = [...savedAnswers, savedAnswer]
 
@@ -124,10 +236,62 @@ function InterviewPage() {
     if (listening) stopVoice()
     stopInterviewerVoice()
 
-    const isLastQuestionInRound = currentQuestionIndex === questionCount - 1
-    const isLastRound = currentRoundIndex === interviewRounds.length - 1
+    if (activeFollowup) {
+      setActiveFollowup(null)
 
-    if (isLastQuestionInRound && isLastRound) {
+      const moved = moveToNextPlannedQuestion()
+      if (!moved) {
+        sessionStorage.setItem(
+          'voltInterviewLatestSession',
+          JSON.stringify({
+            completedAt: new Date().toISOString(),
+            answers: nextSavedAnswers,
+          }),
+        )
+        navigate('/results')
+      }
+
+      return
+    }
+
+    const followup = maybeBuildFollowup(trimmedAnswer)
+    if (followup) {
+      setActiveFollowup(followup)
+      setAskedFollowupKeys((previousKeys) => [
+        ...previousKeys,
+        followup.mainQuestionKey,
+        followup.key,
+      ])
+      setUsedFollowupTopics((previousTopics) => [
+        ...previousTopics,
+        followup.topic.toLowerCase(),
+      ])
+      setInterviewMemory((previousMemory) => {
+        const nextMemory = {
+          ...previousMemory,
+          askedFollowups: uniqueValues([
+            ...previousMemory.askedFollowups,
+            followup.key,
+          ]),
+          roundPivotUsed: followup.isPivot
+            ? {
+                ...previousMemory.roundPivotUsed,
+                [currentRound.key]: true,
+              }
+            : previousMemory.roundPivotUsed,
+        }
+
+        console.log('Generated follow-up:', followup.question)
+        console.log('Interview memory:', nextMemory)
+
+        return nextMemory
+      })
+      setSubmitStatus('Answer saved locally. Asking one follow-up.')
+      return
+    }
+
+    const moved = moveToNextPlannedQuestion()
+    if (!moved) {
       sessionStorage.setItem(
         'voltInterviewLatestSession',
         JSON.stringify({
@@ -136,16 +300,7 @@ function InterviewPage() {
         }),
       )
       navigate('/results')
-      return
     }
-
-    if (isLastQuestionInRound) {
-      setCurrentRoundIndex((previousIndex) => previousIndex + 1)
-      setCurrentQuestionIndex(0)
-      return
-    }
-
-    setCurrentQuestionIndex((previousIndex) => previousIndex + 1)
   }
 
   function playInterviewerVoice() {
@@ -289,7 +444,9 @@ function InterviewPage() {
             <header className="question-heading">
               <div>
                 <p>
-                  Question {currentQuestionIndex + 1} of {questionCount}
+                  {activeFollowup
+                    ? 'Follow-up'
+                    : `Question ${currentQuestionIndex + 1} of ${questionCount}`}
                 </p>
                 <h2>{currentQuestionText}</h2>
               </div>
