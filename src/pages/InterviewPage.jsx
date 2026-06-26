@@ -54,6 +54,7 @@ function InterviewPage() {
       confirmedContext,
     })
   }, [confirmedContext, setupData])
+  const interviewFocus = interviewPlan.focus || {}
   const interviewRounds = interviewPlan.rounds
   const currentRound = interviewRounds[currentRoundIndex]
   const currentQuestion = currentRound.questions[currentQuestionIndex]
@@ -451,19 +452,19 @@ function InterviewPage() {
             {interviewPlan.mode === 'resume' && (
               <SessionRow
                 label="Primary Focus"
-                value={interviewPlan.focus.primaryProject?.name || 'Not set'}
+                value={interviewFocus.primaryProject?.name || 'Not set'}
               />
             )}
             {interviewPlan.mode === 'resume' &&
-              interviewPlan.focus.secondaryProject?.name && (
+              interviewFocus.secondaryProject?.name && (
                 <SessionRow
                   label="Secondary Focus"
-                  value={interviewPlan.focus.secondaryProject.name}
+                  value={interviewFocus.secondaryProject.name}
                 />
               )}
             <SessionRow
               label="Difficulty"
-              value={setupData?.difficulty || 'Hard'}
+              value={setupData?.difficulty || 'Medium'}
             />
             <SessionRow label="Input" value="Text and voice enabled" />
             <SessionRow label="Save" value="Not active in prototype" />

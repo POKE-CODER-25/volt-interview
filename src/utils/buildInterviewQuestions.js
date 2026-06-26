@@ -59,11 +59,13 @@ function makeRound({
 }
 
 function getReadableSkill(skills, fallback = 'your technical stack') {
-  return skills.find(Boolean) || fallback
+  return asArray(skills).find(Boolean) || fallback
 }
 
 function getSecondSkill(skills) {
-  return skills.find((skill, index) => index > 0 && skill) || skills[0] || ''
+  const safeSkills = asArray(skills)
+
+  return safeSkills.find((skill, index) => index > 0 && skill) || safeSkills[0] || ''
 }
 
 function createHumanRounds({ focus = {}, resumeMode = false }) {
@@ -353,10 +355,15 @@ function createHumanRounds({ focus = {}, resumeMode = false }) {
 function hasValidResumeContext(setup, confirmedContext) {
   return (
     setup?.mode === 'resume' &&
-    confirmedContext?.mode === 'resume' &&
+    Boolean(confirmedContext) &&
+    confirmedContext.mode === 'resume' &&
     Array.isArray(confirmedContext.projects) &&
     confirmedContext.projects.some((project) => project?.name)
   )
+}
+
+function hasMalformedResumeContext(setup, confirmedContext) {
+  return setup?.mode === 'resume' && Boolean(confirmedContext)
 }
 
 function getResumeFocus(confirmedContext) {
@@ -400,7 +407,23 @@ export function getSpokenPrompt(round, questionIndex) {
 }
 
 export function buildInterviewQuestions({ setup, confirmedContext }) {
+  if (setup?.mode === 'student' || !setup) {
+    return {
+      mode: 'student',
+      rounds: createHumanRounds({ resumeMode: false }),
+      focus: {
+        primaryProject: null,
+        secondaryProject: null,
+        skills: [],
+      },
+    }
+  }
+
   if (!hasValidResumeContext(setup, confirmedContext)) {
+    if (hasMalformedResumeContext(setup, confirmedContext)) {
+      console.warn('Invalid resume context, falling back to student interview.')
+    }
+
     return {
       mode: 'student',
       rounds: createHumanRounds({ resumeMode: false }),
