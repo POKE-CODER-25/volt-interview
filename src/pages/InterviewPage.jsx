@@ -16,7 +16,12 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 import { useTextToSpeech } from '../hooks/useTextToSpeech'
-import { buildInterviewQuestions } from '../utils/buildInterviewQuestions'
+import {
+  buildInterviewQuestions,
+  getInterviewerLine,
+  getQuestionText,
+  getSpokenPrompt,
+} from '../utils/buildInterviewQuestions'
 import { evaluateAnswer } from '../utils/evaluateAnswer'
 
 function readSessionJson(key) {
@@ -52,11 +57,16 @@ function InterviewPage() {
   const interviewRounds = interviewPlan.rounds
   const currentRound = interviewRounds[currentRoundIndex]
   const currentQuestion = currentRound.questions[currentQuestionIndex]
+  const currentQuestionText = getQuestionText(currentQuestion)
+  const interviewerDialogue = getInterviewerLine(
+    currentRound,
+    currentQuestionIndex,
+  )
   const questionCount = currentRound.questions.length
-  const isFirstQuestionInRound = currentQuestionIndex === 0
-  const interviewerVoiceLine = isFirstQuestionInRound
-    ? currentRound.firstPrompt
-    : `${currentRound.nextPromptPrefix} ${currentQuestion}`
+  const interviewerVoiceLine = getSpokenPrompt(
+    currentRound,
+    currentQuestionIndex,
+  )
   const {
     supported: voiceSupported,
     listening,
@@ -91,7 +101,7 @@ function InterviewPage() {
 
     const evaluation = evaluateAnswer({
       answer: trimmedAnswer,
-      question: currentQuestion,
+      question: currentQuestionText,
       round: currentRound.round,
     })
 
@@ -100,7 +110,7 @@ function InterviewPage() {
     const savedAnswer = {
       round: currentRound.round,
       interviewer: currentRound.interviewer,
-      question: currentQuestion,
+      question: currentQuestionText,
       answer: trimmedAnswer,
       evaluation,
     }
@@ -156,23 +166,23 @@ function InterviewPage() {
           const isLocked = index > currentRoundIndex
 
           return (
-          <div
-            key={round.round}
-            className={`round-step${isActive ? ' active' : ''}${
-              isCompleted ? ' completed' : ''
-            }${isLocked ? ' locked' : ''}`}
-            aria-current={isActive ? 'step' : undefined}
-            aria-label={`${round.round} round ${
-              isCompleted ? 'completed' : isActive ? 'active' : 'locked'
-            }`}
-            style={{
-              opacity: isLocked ? 0.48 : 1,
-              color: isCompleted ? '#79e6b5' : undefined,
-            }}
-          >
-            <span>{index + 1}</span>
-            <strong>{round.round}</strong>
-          </div>
+            <div
+              key={round.round}
+              className={`round-step${isActive ? ' active' : ''}${
+                isCompleted ? ' completed' : ''
+              }${isLocked ? ' locked' : ''}`}
+              aria-current={isActive ? 'step' : undefined}
+              aria-label={`${round.round} round ${
+                isCompleted ? 'completed' : isActive ? 'active' : 'locked'
+              }`}
+              style={{
+                opacity: isLocked ? 0.48 : 1,
+                color: isCompleted ? '#79e6b5' : undefined,
+              }}
+            >
+              <span>{index + 1}</span>
+              <strong>{round.round}</strong>
+            </div>
           )
         })}
       </div>
@@ -206,9 +216,11 @@ function InterviewPage() {
               </p>
               <h1>{currentRound.interviewer}</h1>
               <p className="interviewer-title">{currentRound.title}</p>
-              <blockquote>
-                {interviewerVoiceLine}
-              </blockquote>
+              {interviewerDialogue && (
+                <blockquote>
+                  {interviewerDialogue}
+                </blockquote>
+              )}
               <span className="round-badge">{currentRound.badge}</span>
               <div
                 className="answer-actions"
@@ -278,7 +290,7 @@ function InterviewPage() {
                 <p>
                   Question {currentQuestionIndex + 1} of {questionCount}
                 </p>
-                <h2>{currentQuestion}</h2>
+                <h2>{currentQuestionText}</h2>
               </div>
               <div className="prototype-timer" title="Static prototype timer">
                 <Clock3 size={18} />
