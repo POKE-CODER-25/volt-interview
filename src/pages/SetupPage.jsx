@@ -1,31 +1,108 @@
 import {
   ArrowRight,
+  CheckCircle2,
   FileText,
   GraduationCap,
+  Trash2,
   Upload,
   UserRound,
   Zap,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const difficulties = [
-  'Fresher',
-  'Internship',
-  'Junior Developer',
-  'Dream Company',
+const difficulties = ['Easy', 'Medium', 'Hard']
+const maxResumeSize = 5 * 1024 * 1024
+const allowedResumeExtensions = ['pdf', 'docx', 'txt']
+const allowedResumeTypes = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'text/plain',
 ]
+
+function formatFileSize(bytes) {
+  if (!bytes) return '0 KB'
+
+  const sizeInMb = bytes / (1024 * 1024)
+  if (sizeInMb >= 1) return `${sizeInMb.toFixed(1)} MB`
+
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`
+}
+
+function isAllowedResumeFile(file) {
+  const extension = file.name.split('.').pop()?.toLowerCase()
+
+  return (
+    allowedResumeExtensions.includes(extension) ||
+    allowedResumeTypes.includes(file.type)
+  )
+}
 
 function SetupPage() {
   const [mode, setMode] = useState('student')
-  const [resumeName, setResumeName] = useState('')
-  const [branch, setBranch] = useState('CSE')
-  const [year, setYear] = useState('3rd Year')
-  const [difficulty, setDifficulty] = useState('Internship')
+  const [resumeFile, setResumeFile] = useState(null)
+  const [resumeError, setResumeError] = useState('')
+  const [isDraggingResume, setIsDraggingResume] = useState(false)
+  const [difficulty, setDifficulty] = useState('Hard')
+  const fileInputRef = useRef(null)
   const navigate = useNavigate()
+  const hasResume = mode === 'resume' && Boolean(resumeFile)
+  const canStartInterview = mode === 'student' || hasResume
 
-  function handleResume(event) {
-    setResumeName(event.target.files?.[0]?.name || '')
+  function selectResumeFile(file) {
+    if (!file) return
+
+    if (!isAllowedResumeFile(file)) {
+      setResumeFile(null)
+      setResumeError('Upload a PDF, DOCX, or TXT resume.')
+      return
+    }
+
+    if (file.size > maxResumeSize) {
+      setResumeFile(null)
+      setResumeError('Resume must be 5MB or smaller.')
+      return
+    }
+
+    setResumeFile(file)
+    setResumeError('')
+    setMode('resume')
+  }
+
+  function handleResumeInput(event) {
+    selectResumeFile(event.target.files?.[0])
+    event.target.value = ''
+  }
+
+  function handleResumeDrop(event) {
+    event.preventDefault()
+    setIsDraggingResume(false)
+    selectResumeFile(event.dataTransfer.files?.[0])
+  }
+
+  function removeResume() {
+    setResumeFile(null)
+    setResumeError('')
+  }
+
+  function selectStudentMode() {
+    setMode('student')
+    setResumeError('')
+  }
+
+  function startInterview() {
+    if (!canStartInterview) return
+
+    const setupData = {
+      mode,
+      difficulty,
+      hasResume,
+      resumeFileName: hasResume ? resumeFile.name : '',
+      uploadedAt: hasResume ? new Date().toISOString() : null,
+    }
+
+    sessionStorage.setItem('voltInterviewSetup', JSON.stringify(setupData))
+    navigate('/interview')
   }
 
   return (
@@ -43,71 +120,98 @@ function SetupPage() {
 
       <div className="setup-layout">
         <div className="setup-controls">
-          <SetupSection number="01" title="Choose Mode">
+          <SetupSection number="01" title="Choose Interview Path">
             <div className="mode-grid">
               <ModeCard
                 icon={FileText}
-                title="Resume Mode"
-                description="Upload your resume and receive personalized interview questions."
-                buttonText="Select Resume Mode"
+                title="Resume Interview"
+                description="Upload a resume file for this setup. Parsing and personalization come later."
+                buttonText="Select Resume Path"
                 selected={mode === 'resume'}
                 onSelect={() => setMode('resume')}
               />
               <ModeCard
                 icon={GraduationCap}
-                title="Student Mode"
+                title="Continue Without Resume"
                 description="Practice standard interviews without uploading a resume."
-                buttonText="Select Student Mode"
+                buttonText="Use Student Interview"
                 selected={mode === 'student'}
-                onSelect={() => setMode('student')}
+                onSelect={selectStudentMode}
               />
             </div>
           </SetupSection>
 
-          <SetupSection
-            number="02"
-            title={mode === 'resume' ? 'Upload Resume' : 'Student Details'}
-          >
-            {mode === 'resume' ? (
-              <div className="glass-panel resume-upload">
+          {mode === 'resume' && (
+            <SetupSection number="02" title="Resume Upload">
+              <div
+                className={`glass-panel resume-upload${
+                  isDraggingResume ? ' dragging' : ''
+                }${resumeError ? ' invalid' : ''}`}
+                onDragEnter={(event) => {
+                  event.preventDefault()
+                  setIsDraggingResume(true)
+                }}
+                onDragOver={(event) => event.preventDefault()}
+                onDragLeave={(event) => {
+                  if (event.currentTarget.contains(event.relatedTarget)) return
+                  setIsDraggingResume(false)
+                }}
+                onDrop={handleResumeDrop}
+              >
                 <Upload size={28} />
                 <div>
-                  <h3>Upload Resume</h3>
-                  <p>Accepted formats: PDF, DOCX</p>
+                  <h3>Drag and drop your resume</h3>
+                  <p>Accepted formats: PDF, DOCX, TXT. Max size: 5MB.</p>
                 </div>
-                <label className="upload-button">
-                  Choose file
-                  <input
-                    type="file"
-                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={handleResume}
-                  />
-                </label>
-                {resumeName && (
-                  <p className="selected-file">
-                    Resume selected: <strong>{resumeName}</strong>
+                <button
+                  type="button"
+                  className="upload-button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Browse file
+                </button>
+                <input
+                  ref={fileInputRef}
+                  className="resume-file-input"
+                  type="file"
+                  accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                  onChange={handleResumeInput}
+                />
+
+                {resumeFile && (
+                  <div className="selected-file">
+                    <div>
+                      <CheckCircle2 size={17} />
+                      <span>
+                        <strong>{resumeFile.name}</strong>
+                        {formatFileSize(resumeFile.size)}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="remove-resume-button"
+                      onClick={removeResume}
+                      aria-label="Remove selected resume"
+                      title="Remove resume"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
+
+                {resumeError && (
+                  <p className="resume-error" role="alert">
+                    {resumeError}
                   </p>
                 )}
               </div>
-            ) : (
-              <div className="glass-panel student-fields">
-                <SelectField
-                  label="Branch"
-                  value={branch}
-                  onChange={setBranch}
-                  options={['CSE', 'ECE', 'EEE', 'Mechanical', 'Civil', 'Other']}
-                />
-                <SelectField
-                  label="Year"
-                  value={year}
-                  onChange={setYear}
-                  options={['1st Year', '2nd Year', '3rd Year', '4th Year']}
-                />
-              </div>
-            )}
-          </SetupSection>
+            </SetupSection>
+          )}
 
-          <SetupSection number="03" title="Select Difficulty">
+          <SetupSection
+            number={mode === 'resume' ? '03' : '02'}
+            title="Select Difficulty"
+          >
             <div className="difficulty-grid">
               {difficulties.map((level) => (
                 <button
@@ -128,34 +232,39 @@ function SetupPage() {
           <div className="preview-orbit">
             <UserRound size={28} />
           </div>
-          <p className="preview-label">Interview Preview</p>
-          <h2>Chamber readiness</h2>
+          <p className="preview-label">Interview Summary</p>
+          <h2>Interview Summary</h2>
 
           <dl className="preview-list">
             <PreviewRow
-              label="Mode"
-              value={mode === 'resume' ? 'Resume Mode' : 'Student Mode'}
+              label="Interview Type"
+              value={mode === 'resume' ? 'Resume Interview' : 'Student Interview'}
             />
-            {mode === 'resume' ? (
-              <PreviewRow label="Resume" value={resumeName || 'Not selected'} />
-            ) : (
-              <>
-                <PreviewRow label="Branch" value={branch} />
-                <PreviewRow label="Year" value={year} />
-              </>
-            )}
             <PreviewRow label="Difficulty" value={difficulty} highlight />
+            <PreviewRow label="Estimated Duration" value={'\u224818 minutes'} />
+            <PreviewRow label="Voice" value="Browser Voice" />
+            {mode === 'resume' && (
+              <PreviewRow
+                label="Resume"
+                value={resumeFile ? resumeFile.name : 'Not uploaded yet'}
+              />
+            )}
           </dl>
 
           <button
             type="button"
             className="start-interview-button"
-            onClick={() => navigate('/interview')}
+            onClick={startInterview}
+            disabled={!canStartInterview}
           >
             Start Interview
             <ArrowRight size={19} />
           </button>
-          <p className="preview-note">Your simulation chamber is standing by.</p>
+          <p className="preview-note">
+            {canStartInterview
+              ? 'Your simulation chamber is standing by.'
+              : 'Upload a resume to start Resume Interview.'}
+          </p>
         </aside>
       </div>
     </section>
@@ -193,19 +302,6 @@ function ModeCard({
         {selected ? 'Selected' : buttonText}
       </button>
     </article>
-  )
-}
-
-function SelectField({ label, value, onChange, options }) {
-  return (
-    <label className="setup-select">
-      <span>{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
-        {options.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
-      </select>
-    </label>
   )
 }
 

@@ -394,7 +394,14 @@ body::before {
   gap: 16px;
   align-items: center;
   border-radius: 22px;
+  transition: border-color .2s, box-shadow .2s, background .2s;
 }
+.resume-upload.dragging {
+  border-color: rgba(245,230,66,.55);
+  background: linear-gradient(145deg, rgba(22,39,58,.86), rgba(19,26,25,.7));
+  box-shadow: 0 24px 70px rgba(0,0,0,.28), 0 0 34px rgba(245,230,66,.12);
+}
+.resume-upload.invalid { border-color: rgba(248,113,113,.38); }
 .resume-upload > svg { color: #75c8ff; }
 .resume-upload h3 { margin: 0; font-size: 16px; }
 .resume-upload p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
@@ -408,6 +415,13 @@ body::before {
   font-weight: 800;
   cursor: pointer;
 }
+.resume-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
 .upload-button input {
   position: absolute;
   width: 1px;
@@ -419,10 +433,45 @@ body::before {
   grid-column: 1 / -1;
   margin: 4px 0 0;
   padding-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   border-top: 1px solid rgba(255,255,255,.08);
   color: #a9bad0;
 }
+.selected-file > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.selected-file svg { flex: 0 0 auto; color: #79e6b5; }
+.selected-file span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
 .selected-file strong { color: #fff; }
+.remove-resume-button {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(248,113,113,.24);
+  border-radius: 10px;
+  color: #f1b4b4;
+  background: rgba(248,113,113,.08);
+}
+.remove-resume-button svg { color: currentColor; }
+.resume-upload .resume-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 3px;
+  color: #f1b4b4;
+}
 .student-fields {
   padding: 24px;
   display: grid;
@@ -447,7 +496,7 @@ body::before {
   background: #081426;
 }
 .setup-select select:focus { border-color: rgba(117,200,255,.55); }
-.difficulty-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.difficulty-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .difficulty-card {
   min-height: 92px;
   padding: 14px;
@@ -521,6 +570,12 @@ body::before {
   background: var(--yellow);
   box-shadow: 0 0 28px rgba(245,230,66,.16);
   font-weight: 900;
+}
+.start-interview-button:disabled {
+  cursor: not-allowed;
+  color: #7890a8;
+  background: rgba(255,255,255,.07);
+  box-shadow: none;
 }
 .preview-note { margin: 13px 0 0; color: #718298; font-size: 11px; text-align: center; }
 
