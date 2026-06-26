@@ -472,6 +472,259 @@ body::before {
   padding-top: 3px;
   color: #f1b4b4;
 }
+.resume-analysis-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 2px;
+}
+.analyze-resume-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  color: #07101e;
+  background: var(--yellow);
+  font-size: 13px;
+  font-weight: 900;
+}
+.analyze-resume-button:disabled {
+  cursor: wait;
+  opacity: .72;
+}
+.resume-analysis-status {
+  color: #79e6b5;
+  font-size: 12px;
+  font-weight: 850;
+}
+.parsed-resume-preview {
+  margin-top: 16px;
+  padding: 22px;
+  border-radius: 22px;
+}
+.parsed-resume-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.parsed-resume-heading svg { color: #79e6b5; }
+.parsed-resume-heading p {
+  margin: 0;
+  color: #75c8ff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.parsed-resume-heading h3 { margin: 4px 0 0; font-size: 17px; }
+.parsed-resume-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.parsed-resume-field {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+}
+.parsed-resume-field span {
+  display: block;
+  color: #75c8ff;
+  font-size: 11px;
+  font-weight: 900;
+}
+.parsed-resume-field ul {
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+  list-style: none;
+}
+.parsed-resume-field li,
+.parsed-resume-field p {
+  margin: 0;
+  color: #dce9f5;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.parsed-resume-field p { margin-top: 10px; color: #718298; }
+.parsed-projects-field { grid-column: 1 / -1; }
+.parsed-projects-field li {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.parsed-projects-field li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.parsed-projects-field strong {
+  display: block;
+  color: #eef8ff;
+  font-size: 13px;
+}
+.parsed-projects-field small {
+  display: block;
+  margin-top: 5px;
+  color: #9badc2;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.resume-focus-editor {
+  margin-top: 16px;
+  padding: 22px;
+  border-radius: 22px;
+}
+.resume-focus-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+.resume-focus-heading p {
+  margin: 0;
+  color: #75c8ff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.resume-focus-heading h3 { margin: 5px 0 0; font-size: 18px; }
+.resume-focus-heading span,
+.resume-focus-subtitle {
+  color: #9badc2;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.resume-focus-heading span {
+  display: block;
+  margin-top: 7px;
+}
+.resume-focus-heading strong {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid rgba(121,230,181,.25);
+  border-radius: 999px;
+  color: #79e6b5;
+  background: rgba(121,230,181,.08);
+  font-size: 10px;
+}
+.resume-focus-subtitle { margin: 16px 0 0; }
+.focus-project-list {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+}
+.focus-project-card {
+  padding: 16px;
+  display: grid;
+  gap: 13px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+}
+.focus-project-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.focus-project-card-heading span {
+  color: var(--yellow);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.remove-focus-project {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(248,113,113,.24);
+  border-radius: 10px;
+  color: #f1b4b4;
+  background: rgba(248,113,113,.08);
+}
+.focus-field { display: grid; gap: 7px; }
+.focus-field span {
+  color: #c8d5e3;
+  font-size: 12px;
+  font-weight: 850;
+}
+.focus-field input,
+.focus-field textarea {
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 12px;
+  outline: 0;
+  color: #eef8ff;
+  background: rgba(3,9,19,.65);
+  font: inherit;
+  font-size: 13px;
+}
+.focus-field textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+.focus-field input::placeholder,
+.focus-field textarea::placeholder { color: #5e7086; }
+.focus-field input:focus,
+.focus-field textarea:focus {
+  border-color: rgba(117,200,255,.5);
+  box-shadow: 0 0 0 3px rgba(50,167,255,.09);
+}
+.focus-choice-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.focus-choice-row button,
+.add-project-button {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(117,200,255,.25);
+  border-radius: 11px;
+  color: #d9f1ff;
+  background: rgba(50,167,255,.08);
+  font-size: 12px;
+  font-weight: 850;
+}
+.focus-choice-row button.selected {
+  color: #07101e;
+  border-color: var(--yellow);
+  background: var(--yellow);
+}
+.focus-choice-row button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+.resume-focus-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.confirm-focus-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  color: #07101e;
+  background: var(--yellow);
+  font-size: 13px;
+  font-weight: 900;
+}
+.resume-focus-error {
+  margin: 12px 0 0;
+  color: #f1b4b4;
+  font-size: 12px;
+}
 .student-fields {
   padding: 24px;
   display: grid;
@@ -1310,6 +1563,7 @@ body::before {
   .session-panel { position: static; }
   .results-hero, .mastery-layout { grid-template-columns: 1fr; }
   .score-grid { grid-template-columns: repeat(2, 1fr); }
+  .parsed-resume-grid { grid-template-columns: 1fr; }
   .insight-grid { grid-template-columns: 1fr; }
   .mastery-grid { grid-template-columns: repeat(3, 1fr); }
   .user-overview { grid-template-columns: 1fr; }
@@ -1337,6 +1591,15 @@ body::before {
   .mode-grid, .student-fields { grid-template-columns: 1fr; }
   .resume-upload { grid-template-columns: auto 1fr; }
   .upload-button { grid-column: 1 / -1; text-align: center; }
+  .resume-analysis-actions { align-items: stretch; flex-direction: column; }
+  .analyze-resume-button { width: 100%; }
+  .resume-focus-heading,
+  .resume-focus-actions,
+  .focus-choice-row {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+  .resume-focus-actions button { width: 100%; }
   .difficulty-grid { grid-template-columns: 1fr 1fr; }
   .interview-page { padding: 30px 18px 56px; }
   .round-step strong { font-size: 9px; letter-spacing: .02em; }
