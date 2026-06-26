@@ -23,9 +23,7 @@ import {
 } from '../utils/answerAnalyzer'
 import {
   buildInterviewQuestions,
-  getInterviewerLine,
   getQuestionText,
-  getSpokenPrompt,
 } from '../utils/buildInterviewQuestions'
 import { evaluateAnswer } from '../utils/evaluateAnswer'
 
@@ -38,6 +36,54 @@ function readSessionJson(key) {
   } catch {
     return null
   }
+}
+
+function getInterviewQuestionPresentation(question) {
+  return String(question || '')
+    .replace(/^\s*(?:follow[-\s]?up|pivot|main question)\s*:?\s*/i, '')
+    .replace(/^\s*that's interesting[.!]?\s*/i, '')
+    .replace(/^\s*i want to follow that thread for a moment[.!]?\s*/i, '')
+    .replace(/^\s*i want to stay with that for a moment[.!]?\s*/i, '')
+    .replace(/^\s*i'd like to stay on that topic[.!]?\s*/i, '')
+    .replace(/^\s*let's follow up[.!]?\s*/i, '')
+    .replace(/^\s*let's explore that[.!]?\s*/i, '')
+    .replace(/^\s*conversation pivot[.!]?\s*/i, '')
+    .trim()
+}
+
+function getInterviewerDialoguePresentation(round, questionIndex, isGeneratedQuestion) {
+  if (isGeneratedQuestion) {
+    const generatedLines = [
+      "I'd like to understand that point more clearly.",
+      'That gives me a useful direction to explore.',
+      "Let's look at that answer a little deeper.",
+    ]
+
+    return generatedLines[questionIndex % generatedLines.length]
+  }
+
+  const linesByRound = {
+    hr: [
+      "I'd like to understand your background and how you think about your work.",
+      "Let's talk through your experience in a practical way.",
+      'I want to get a clearer sense of how you present yourself.',
+    ],
+    technical: [
+      "Let's go deeper into your technical thinking.",
+      "I'll focus on how you reason through implementation decisions.",
+      'I want to understand how you approach technical problems.',
+    ],
+    project: [
+      "Let's talk about the projects you've built and the choices behind them.",
+      "I'm interested in how you explain your work and your decisions.",
+      "Let's explore the project experience you bring.",
+    ],
+  }
+  const roundLines = linesByRound[round.key] || [
+    "Let's talk through this in a clear and practical way.",
+  ]
+
+  return roundLines[questionIndex % roundLines.length]
 }
 
 function InterviewPage() {
@@ -82,13 +128,13 @@ function InterviewPage() {
   const currentQuestion = currentRound.questions[currentQuestionIndex]
   const plannedQuestionText = getQuestionText(currentQuestion)
   const currentQuestionText = activeFollowup?.question || plannedQuestionText
-  const interviewerDialogue =
-    activeFollowup?.dialogue ||
-    getInterviewerLine(currentRound, currentQuestionIndex)
+  const presentedQuestionText = getInterviewQuestionPresentation(currentQuestionText)
+  const presentedInterviewerDialogue = getInterviewerDialoguePresentation(
+    currentRound,
+    currentQuestionIndex,
+    Boolean(activeFollowup),
+  )
   const questionCount = currentRound.questions.length
-  const interviewerVoiceLine = activeFollowup
-    ? [activeFollowup.dialogue, activeFollowup.question].filter(Boolean).join(' ')
-    : getSpokenPrompt(currentRound, currentQuestionIndex)
   const {
     supported: voiceSupported,
     listening,
@@ -191,9 +237,6 @@ function InterviewPage() {
         ...followup,
         mainQuestionKey,
         parentQuestion: plannedQuestionText,
-        dialogue: followup.isPivot
-          ? "That's interesting. I want to follow that thread for a moment."
-          : 'I want to stay with that for a moment.',
         round: currentRound.round,
       }
     } catch (error) {
@@ -304,7 +347,11 @@ function InterviewPage() {
   }
 
   function playInterviewerVoice() {
-    speakInterviewerLine(interviewerVoiceLine)
+    speakInterviewerLine(
+      [presentedInterviewerDialogue, presentedQuestionText]
+        .filter((line) => line?.trim())
+        .join(' '),
+    )
   }
 
   const voiceButtonLabel = starting
@@ -372,11 +419,9 @@ function InterviewPage() {
               </p>
               <h1>{currentRound.interviewer}</h1>
               <p className="interviewer-title">{currentRound.title}</p>
-              {interviewerDialogue && (
-                <blockquote>
-                  {interviewerDialogue}
-                </blockquote>
-              )}
+              <blockquote>
+                {presentedInterviewerDialogue}
+              </blockquote>
               <span className="round-badge">{currentRound.badge}</span>
               <div
                 className="answer-actions"
@@ -444,11 +489,9 @@ function InterviewPage() {
             <header className="question-heading">
               <div>
                 <p>
-                  {activeFollowup
-                    ? 'Follow-up'
-                    : `Question ${currentQuestionIndex + 1} of ${questionCount}`}
+                  {`Question ${currentQuestionIndex + 1} of ${questionCount}`}
                 </p>
-                <h2>{currentQuestionText}</h2>
+                <h2>{presentedQuestionText}</h2>
               </div>
               <div className="prototype-timer" title="Static prototype timer">
                 <Clock3 size={18} />
