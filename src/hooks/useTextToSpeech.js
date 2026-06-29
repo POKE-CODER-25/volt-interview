@@ -1,71 +1,47 @@
 import { useEffect, useRef, useState } from 'react'
-
-function getSpeechSynthesis() {
-  if (typeof window === 'undefined') return null
-
-  return window.speechSynthesis || null
-}
-
-function getSpeechSynthesisUtterance() {
-  if (typeof window === 'undefined') return null
-
-  return window.SpeechSynthesisUtterance || null
-}
+import { VoiceManager } from '../utils/voiceManager'
 
 export function useTextToSpeech() {
   const [speaking, setSpeaking] = useState(false)
-  const utteranceRef = useRef(null)
-  const supported = Boolean(getSpeechSynthesis() && getSpeechSynthesisUtterance())
+  const speechRequestRef = useRef(0)
+  const supported = VoiceManager.isSupported()
 
   useEffect(() => {
     return () => {
-      getSpeechSynthesis()?.cancel()
-      utteranceRef.current = null
+      VoiceManager.stop()
+      speechRequestRef.current += 1
     }
   }, [])
 
-  function speak(text, options = {}) {
-    const synthesis = getSpeechSynthesis()
-    const SpeechSynthesisUtterance = getSpeechSynthesisUtterance()
-
-    if (!synthesis || !SpeechSynthesisUtterance || !text?.trim()) {
+  async function speak(text, interviewer) {
+    if (!supported || !text?.trim()) {
       return
     }
 
-    synthesis.cancel()
-
-    const utterance = new SpeechSynthesisUtterance(text.trim())
-    utterance.lang = options.lang || 'en-US'
-    utterance.rate = options.rate ?? 0.95
-    utterance.pitch = options.pitch ?? 1
-    utterance.volume = options.volume ?? 1
-
-    utterance.onstart = () => {
-      setSpeaking(true)
-    }
-
-    utterance.onend = () => {
-      if (utteranceRef.current === utterance) {
-        utteranceRef.current = null
-        setSpeaking(false)
-      }
-    }
-
-    utterance.onerror = () => {
-      if (utteranceRef.current === utterance) {
-        utteranceRef.current = null
-        setSpeaking(false)
-      }
-    }
-
-    utteranceRef.current = utterance
+    const requestId = speechRequestRef.current + 1
+    speechRequestRef.current = requestId
     setSpeaking(true)
-    synthesis.speak(utterance)
+
+    const didStart = await VoiceManager.speak(text, interviewer, {
+      onStart: () => {
+        if (speechRequestRef.current === requestId) setSpeaking(true)
+      },
+      onEnd: () => {
+        if (speechRequestRef.current === requestId) setSpeaking(false)
+      },
+      onError: () => {
+        if (speechRequestRef.current === requestId) setSpeaking(false)
+      },
+    })
+
+    if (!didStart && speechRequestRef.current === requestId) {
+      setSpeaking(false)
+    }
   }
 
   function stop() {
-    getSpeechSynthesis()?.cancel()
-    utteranceRef.current = null
+    VoiceManager.stop()
+    speechRequestRef.current += 1
     setSpeaking(false)
   }
 

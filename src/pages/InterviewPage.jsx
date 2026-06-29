@@ -347,6 +347,7 @@ function InterviewPage() {
       [presentedInterviewerDialogue, presentedQuestionText]
         .filter((line) => line?.trim())
         .join(' '),
+      currentRound.interviewer,
     )
   }
 
