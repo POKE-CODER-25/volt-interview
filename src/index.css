@@ -4136,3 +4136,350 @@ strong,
     background-position: 0 -520px, 38px -440px, 86px -620px;
   }
 }
+
+/* Phase 5F: readability and energy balance */
+:root {
+  --ew-readable-heading: #2a1307;
+  --ew-readable-body: #5c4a3b;
+  --ew-readable-small: #6b4228;
+  --ew-glass: rgba(255, 248, 236, .9);
+  --ew-glass-strong: rgba(255, 244, 226, .94);
+  --ew-border: rgba(181, 78, 0, .28);
+  --ew-border-soft: rgba(255, 255, 255, .5);
+  --text: var(--ew-readable-heading);
+  --text-soft: #442617;
+  --muted: var(--ew-readable-body);
+}
+
+body {
+  color: var(--ew-readable-heading);
+  background:
+    radial-gradient(circle at 13% 10%, rgba(255, 106, 0, .38), transparent 35rem),
+    radial-gradient(circle at 84% 8%, rgba(255, 200, 0, .31), transparent 30rem),
+    radial-gradient(circle at 4% 92%, rgba(255, 60, 0, .2), transparent 34rem),
+    radial-gradient(circle at 54% 42%, rgba(255, 239, 205, .93), transparent 42rem),
+    linear-gradient(135deg, #fff6e6 0%, #ffe2b3 46%, #fff0d2 100%);
+}
+
+body::before {
+  opacity: .64;
+  background:
+    radial-gradient(circle at 10% 18%, rgba(255, 106, 0, .27), transparent 18rem),
+    radial-gradient(circle at 92% 28%, rgba(255, 200, 0, .2), transparent 20rem),
+    radial-gradient(circle at 42% 86%, rgba(255, 60, 0, .13), transparent 24rem);
+}
+
+body::after {
+  opacity: .26;
+}
+
+.hero-copy,
+.auth-intro,
+.setup-header,
+.results-header,
+.profile-header,
+.landing-section-heading,
+.interview-conversation,
+.placeholder-card {
+  position: relative;
+}
+
+.hero-copy::before,
+.auth-intro::before,
+.setup-header::before,
+.results-header::before,
+.profile-header::before,
+.landing-section-heading::before,
+.interview-conversation::before {
+  content: "";
+  position: absolute;
+  inset: -18px -22px;
+  z-index: -1;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(255, 248, 236, .58), rgba(255, 238, 214, .34));
+  box-shadow: 0 18px 60px rgba(110, 36, 0, .08);
+  backdrop-filter: blur(10px);
+}
+
+.glass-panel,
+.auth-card,
+.character-panel,
+.placeholder-card,
+.mode-card,
+.resume-upload,
+.parsed-resume-preview,
+.resume-focus-editor,
+.student-fields,
+.setup-preview,
+.interviewer-card,
+.interview-stage,
+.answer-card,
+.session-panel,
+.volt-ai-card,
+.overall-score-card,
+.score-card,
+.insight-card,
+.mastery-card,
+.rank-card,
+.achievement-card,
+.user-overview,
+.profile-mastery-card,
+.history-card,
+.tracker-card,
+.daily-challenge,
+.landing-preview-wrap,
+.interview-preview-card,
+.landing-card,
+.landing-feature-card,
+.electric-badge {
+  border-color: var(--ew-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 248, .3), rgba(255, 226, 188, .1)),
+    var(--ew-glass);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .68),
+    inset 0 -1px 0 rgba(110, 36, 0, .05),
+    0 18px 44px rgba(110, 36, 0, .14),
+    0 0 34px rgba(255, 106, 0, .1);
+  backdrop-filter: blur(24px) saturate(1.18);
+}
+
+.character-card,
+.parsed-resume-field,
+.focus-project-card,
+.overview-stats > div,
+.auth-toggle,
+.round-progress,
+.preview-question,
+.candidate-answer-preview,
+.mini-report-preview,
+.floating-chip,
+.eyebrow,
+.placeholder-eyebrow,
+.auth-intro > p:first-child,
+.auth-heading p,
+.panel-heading p,
+.setup-section-heading span,
+.parsed-resume-heading p,
+.resume-focus-heading p,
+.preview-label,
+.interviewer-status,
+.round-badge,
+.session-heading p,
+.results-kicker,
+.prototype-tag,
+.achievement-card span,
+.profile-identity span,
+.challenge-copy > span,
+.landing-section-heading p,
+.resume-aware-badge {
+  color: #6a2f00 !important;
+  border-color: rgba(181, 78, 0, .25);
+  background: rgba(255, 248, 236, .82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .68),
+    0 8px 22px rgba(110, 36, 0, .08);
+  backdrop-filter: blur(18px);
+}
+
+h1,
+h2,
+h3,
+strong,
+.tagline,
+.interviewer-identity h1,
+.preview-card-top h2,
+.landing-card h3,
+.landing-feature-card h3,
+.character-card h2,
+.auth-heading h2,
+.setup-section-heading h2,
+.results-section-heading h2,
+.profile-section-heading h2,
+.question-heading h2,
+.session-heading h2 {
+  color: var(--ew-readable-heading);
+}
+
+.hero-copy h1 span,
+.auth-intro h1 span,
+.landing-section-heading h2,
+.setup-header h1,
+.results-header h1,
+.profile-header h1,
+.placeholder-card h1,
+.question-heading h2 {
+  background: linear-gradient(96deg, #ff5a00 0%, #ff8a00 45%, #ffc800 100%);
+  background-clip: text;
+  text-shadow: 0 1px 0 rgba(110, 36, 0, .24);
+  filter: drop-shadow(0 0 8px rgba(255, 149, 0, .1));
+}
+
+.description,
+.landing-card p,
+.landing-section-heading span,
+.interviewer-identity p,
+.interviewer-dialogue,
+.candidate-answer-preview p,
+.profile-identity p,
+.session-list dt,
+.history-row,
+.score-card p,
+.insight-card li,
+.tracker-card li,
+.mode-card p,
+.resume-upload p,
+.setup-header > p,
+.results-header > p,
+.profile-header > p,
+.auth-intro > p:last-child,
+.placeholder-card p,
+.challenge-copy p,
+.achievement-card p,
+.rank-card p,
+.rank-card span,
+.mastery-card p,
+.profile-mastery-heading p {
+  color: var(--ew-readable-body);
+}
+
+.nav-link,
+.user-label,
+.panel-heading span,
+.preview-card-top p,
+.score-ring span,
+.electric-badge small,
+.profile-prototype-note,
+.preview-note,
+.session-list dd,
+.history-row span {
+  color: var(--ew-readable-small);
+}
+
+.selected-file,
+.selected-file strong,
+.parsed-resume-field li,
+.parsed-projects-field strong,
+.preview-list dd,
+.score-card strong,
+.overview-stats strong,
+.electric-badge > span,
+.history-row strong,
+.volt-ai-card blockquote,
+.mini-report-preview span,
+.candidate-answer-preview span {
+  color: var(--ew-readable-heading);
+}
+
+.auth-field input,
+.focus-field input,
+.focus-field textarea,
+.setup-select select,
+.answer-field textarea,
+.interview-page .answer-field textarea {
+  color: var(--ew-readable-heading);
+  border-color: rgba(181, 78, 0, .24);
+  background: rgba(255, 248, 236, .86);
+  backdrop-filter: blur(18px);
+}
+
+.auth-field input::placeholder,
+.focus-field input::placeholder,
+.focus-field textarea::placeholder,
+.answer-field textarea::placeholder,
+.interview-page .answer-field textarea::placeholder {
+  color: rgba(92, 74, 59, .72);
+}
+
+.auth-field input:focus,
+.focus-field input:focus,
+.focus-field textarea:focus,
+.setup-select select:focus,
+.answer-field textarea:focus,
+.interview-page .answer-field textarea:focus {
+  background: rgba(255, 246, 232, .94);
+  border-color: rgba(255, 106, 0, .58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    0 0 0 4px rgba(255, 106, 0, .12),
+    0 16px 34px rgba(110, 36, 0, .12);
+}
+
+.button-secondary,
+.logout-button,
+.upload-button,
+.mode-card button,
+.focus-choice-row button,
+.add-project-button,
+.results-home-button,
+.voice-icon-button,
+.answer-mic-button,
+.voice-prototype {
+  color: #672900;
+  border-color: rgba(181, 78, 0, .28);
+  background: rgba(255, 248, 236, .84);
+}
+
+.navbar {
+  background: rgba(255, 244, 224, .78);
+  border-bottom-color: rgba(181, 78, 0, .2);
+  backdrop-filter: blur(26px) saturate(1.18);
+}
+
+.landing-glow-one {
+  opacity: .95;
+  background: radial-gradient(circle, rgba(255, 106, 0, .42), transparent 66%);
+}
+
+.landing-glow-two {
+  opacity: .9;
+  background: radial-gradient(circle, rgba(255, 200, 0, .32), transparent 68%);
+}
+
+.landing-preview-wrap::after,
+.interview-stage::after,
+.results-hero::after,
+.setup-layout::after,
+.user-overview::after {
+  content: "";
+  position: absolute;
+  inset: auto 12% -26px;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 149, 0, .35), transparent);
+  pointer-events: none;
+}
+
+.landing-preview-wrap,
+.interview-stage,
+.results-hero,
+.setup-layout,
+.user-overview {
+  position: relative;
+}
+
+.score-track,
+.profile-progress-track {
+  background: rgba(110, 36, 0, .13);
+}
+
+.score-ring strong,
+.history-score,
+.mastery-card > strong,
+.rank-card h3,
+.mini-report-preview strong {
+  color: #c64c00;
+}
+
+@media (max-width: 620px) {
+  .hero-copy::before,
+  .auth-intro::before,
+  .setup-header::before,
+  .results-header::before,
+  .profile-header::before,
+  .landing-section-heading::before,
+  .interview-conversation::before {
+    inset: -12px;
+    border-radius: 22px;
+  }
+}
