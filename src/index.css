@@ -1627,3 +1627,520 @@ body::before {
   .profile-actions { flex-direction: column; }
   .profile-actions .button { width: 100%; }
 }
+
+/* Final UI Phase 5A: premium warm light theme */
+:root {
+  color: #251711;
+  background: #fff8ea;
+  --blue: #e84f1f;
+  --yellow: #f6bf2f;
+  --white: #fffdf8;
+  --muted: #7b6c61;
+  --text: #251711;
+  --text-soft: #59483d;
+  --cream: #fff4de;
+  --cream-strong: #ffe8bd;
+  --panel: rgba(255, 253, 247, .84);
+  --panel-solid: #fffdf8;
+  --border-warm: rgba(222, 120, 42, .2);
+  --border-strong: rgba(226, 84, 31, .32);
+  --primary: #d94d20;
+  --primary-dark: #9f2d18;
+  --accent: #f58b20;
+  --accent-soft: rgba(245, 139, 32, .12);
+  --gold: #f6bf2f;
+  --success: #2f8a61;
+  --danger: #ba3025;
+  --warm-shadow: 0 24px 65px rgba(172, 87, 25, .13);
+  --warm-glow: 0 0 34px rgba(245, 139, 32, .16);
+}
+
+body {
+  color: var(--text);
+  background:
+    radial-gradient(circle at 8% 8%, rgba(255, 197, 77, .28), transparent 29rem),
+    radial-gradient(circle at 88% 18%, rgba(245, 116, 32, .18), transparent 28rem),
+    linear-gradient(145deg, #fffaf0 0%, #fff3d8 48%, #fffdf8 100%);
+}
+
+body::before {
+  opacity: .52;
+  background-image:
+    linear-gradient(rgba(224, 128, 42, .09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 128, 42, .08) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
+.app-shell {
+  color: var(--text);
+}
+
+.navbar {
+  border-bottom: 1px solid rgba(214, 111, 33, .18);
+  background: rgba(255, 250, 239, .86);
+  box-shadow: 0 8px 28px rgba(128, 63, 23, .08);
+}
+
+.brand {
+  color: var(--text);
+}
+
+.brand strong,
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary);
+}
+
+.brand-icon,
+.placeholder-icon,
+.profile-avatar,
+.achievement-badge,
+.challenge-icon {
+  color: var(--primary);
+  border-color: rgba(217, 77, 32, .25);
+  background: linear-gradient(145deg, rgba(255, 235, 190, .94), rgba(255, 249, 237, .8));
+  box-shadow: 0 12px 28px rgba(217, 77, 32, .14);
+}
+
+.nav-link,
+.user-label,
+.logout-button {
+  color: var(--text-soft);
+}
+
+.logout-button,
+.button-secondary,
+.upload-button,
+.mode-card button,
+.focus-choice-row button,
+.add-project-button,
+.results-home-button {
+  border-color: rgba(217, 77, 32, .2);
+  color: var(--primary-dark);
+  background: rgba(255, 251, 243, .72);
+  box-shadow: 0 10px 24px rgba(166, 74, 19, .07);
+}
+
+.logout-button:hover,
+.button-secondary:hover,
+.upload-button:hover,
+.mode-card button:hover,
+.focus-choice-row button:hover,
+.add-project-button:hover,
+.results-home-button:hover {
+  border-color: rgba(217, 77, 32, .34);
+  background: rgba(255, 238, 203, .72);
+}
+
+.hero-copy h1,
+.auth-intro h1,
+.setup-header h1,
+.results-header h1,
+.profile-header h1,
+.placeholder-card h1,
+.question-heading h2 {
+  color: var(--text);
+}
+
+.hero-copy h1 span,
+.auth-intro h1 span {
+  color: transparent;
+  background: linear-gradient(100deg, #8f2718 0%, var(--primary) 42%, var(--accent) 72%, var(--gold) 100%);
+  background-clip: text;
+}
+
+.eyebrow,
+.placeholder-eyebrow,
+.auth-intro > p:first-child,
+.auth-heading p,
+.panel-heading p,
+.setup-section-heading span,
+.parsed-resume-heading p,
+.resume-focus-heading p,
+.preview-label,
+.interviewer-status,
+.round-badge,
+.question-heading span,
+.session-heading p,
+.results-kicker,
+.prototype-tag,
+.achievement-card span,
+.profile-identity span,
+.challenge-copy > span {
+  color: var(--primary) !important;
+  border-color: rgba(217, 77, 32, .22);
+  background: rgba(255, 239, 207, .68);
+}
+
+.tagline,
+h1,
+h2,
+h3,
+strong {
+  color: var(--text);
+}
+
+.description,
+.placeholder-card p,
+.auth-intro > p:last-child,
+.setup-header > p,
+.mode-card p,
+.resume-upload p,
+.resume-focus-heading span,
+.resume-focus-subtitle,
+.results-header > p,
+.profile-header > p,
+.character-card p,
+.interviewer-title,
+.prototype-feedback span,
+.score-card p,
+.insight-card li,
+.mastery-card p,
+.rank-card p,
+.rank-card span,
+.achievement-card p,
+.profile-identity p,
+.profile-mastery-heading p,
+.profile-prototype-note,
+.electric-badge small,
+.history-row,
+.tracker-card li,
+.challenge-copy p,
+.preview-note,
+.session-list dt,
+.panel-heading span {
+  color: var(--muted);
+}
+
+.glass-panel,
+.auth-card,
+.character-panel,
+.placeholder-card,
+.mode-card,
+.resume-upload,
+.parsed-resume-preview,
+.resume-focus-editor,
+.student-fields,
+.setup-preview,
+.interviewer-card,
+.question-panel,
+.session-panel,
+.volt-ai-card,
+.overall-score-card,
+.score-card,
+.insight-card,
+.mastery-card,
+.rank-card,
+.achievement-card,
+.user-overview,
+.profile-mastery-card,
+.history-card,
+.tracker-card,
+.daily-challenge {
+  border-color: var(--border-warm);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .86), rgba(255, 244, 222, .76));
+  box-shadow: var(--warm-shadow), var(--warm-glow);
+  backdrop-filter: blur(18px);
+}
+
+.character-card,
+.parsed-resume-field,
+.focus-project-card,
+.overview-stats > div,
+.electric-badge {
+  border-color: rgba(224, 128, 42, .16);
+  background: rgba(255, 255, 255, .58);
+}
+
+.button-primary,
+.auth-submit,
+.analyze-resume-button,
+.confirm-focus-button,
+.start-interview-button,
+.submit-answer,
+.daily-challenge button,
+.mode-card.selected button,
+.focus-choice-row button.selected {
+  color: #fffdf8;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 78%, var(--gold) 100%);
+  box-shadow: 0 16px 32px rgba(217, 77, 32, .22), 0 0 22px rgba(245, 139, 32, .2);
+}
+
+.button-primary:hover,
+.auth-submit:hover,
+.analyze-resume-button:hover,
+.confirm-focus-button:hover,
+.start-interview-button:hover,
+.submit-answer:hover,
+.daily-challenge button:hover {
+  box-shadow: 0 18px 36px rgba(217, 77, 32, .27), 0 0 26px rgba(246, 191, 47, .22);
+}
+
+.mode-card.selected,
+.difficulty-card.selected,
+.resume-upload.dragging,
+.overall-score-card,
+.rank-card,
+.achievement-card,
+.daily-challenge {
+  border-color: rgba(217, 77, 32, .34);
+  box-shadow: 0 22px 52px rgba(172, 87, 25, .15), 0 0 30px rgba(245, 139, 32, .18);
+}
+
+.character-icon.yellow,
+.mode-card.selected .mode-icon,
+.difficulty-card.selected svg,
+.session-heading > svg,
+.results-section-heading svg,
+.profile-section-heading svg,
+.tracker-card.warning .tracker-heading svg {
+  color: var(--accent);
+}
+
+.character-icon.blue,
+.mode-icon,
+.resume-upload > svg,
+.parsed-resume-heading svg,
+.difficulty-card svg,
+.preview-orbit,
+.volt-ai-icon,
+.mastery-icon,
+.overview-stats svg,
+.profile-mastery-icon,
+.insight-card.electric .insight-heading svg {
+  color: var(--primary);
+  border-color: rgba(217, 77, 32, .2);
+  background: rgba(255, 239, 207, .66);
+}
+
+.system-status,
+.resume-analysis-status,
+.session-note,
+.prototype-feedback p,
+.insight-card.success .insight-heading svg,
+.tracker-card.success .tracker-heading svg {
+  color: var(--success) !important;
+}
+
+.system-status i,
+.session-note span,
+.interviewer-status span,
+.insight-card.success li span,
+.tracker-card.success li span {
+  background: var(--success);
+  box-shadow: 0 0 10px rgba(47, 138, 97, .35);
+}
+
+.auth-toggle {
+  border-color: rgba(224, 128, 42, .16);
+  background: rgba(255, 239, 207, .58);
+}
+
+.auth-toggle button {
+  color: var(--muted);
+}
+
+.auth-toggle button.active {
+  color: #fffdf8;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+.auth-field > span,
+.focus-field span,
+.setup-select span,
+.answer-field > span,
+.mastery-meta span {
+  color: var(--text-soft);
+}
+
+.auth-field input,
+.focus-field input,
+.focus-field textarea,
+.setup-select select,
+.answer-field textarea {
+  color: var(--text);
+  border-color: rgba(217, 77, 32, .2);
+  background: rgba(255, 253, 248, .9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+.auth-field input::placeholder,
+.focus-field input::placeholder,
+.focus-field textarea::placeholder,
+.answer-field textarea::placeholder {
+  color: #a39184;
+}
+
+.auth-field svg {
+  color: #a66b48;
+}
+
+.auth-field input:focus,
+.focus-field input:focus,
+.focus-field textarea:focus,
+.setup-select select:focus,
+.answer-field textarea:focus {
+  border-color: rgba(217, 77, 32, .46);
+  box-shadow: 0 0 0 3px rgba(245, 139, 32, .13);
+}
+
+.auth-error,
+.resume-upload.invalid,
+.remove-resume-button,
+.remove-focus-project,
+.resume-error,
+.resume-focus-error {
+  border-color: rgba(186, 48, 37, .26);
+  color: var(--danger);
+  background: rgba(186, 48, 37, .08);
+}
+
+.panel-heading,
+.resume-upload .selected-file,
+.parsed-projects-field li,
+.session-list > div,
+.history-row {
+  border-color: rgba(224, 128, 42, .14);
+}
+
+.selected-file,
+.selected-file strong,
+.parsed-resume-field li,
+.parsed-projects-field strong,
+.preview-list dd,
+.session-list dd,
+.score-card strong,
+.overview-stats strong,
+.electric-badge > span,
+.history-row strong,
+.volt-ai-card blockquote {
+  color: var(--text);
+}
+
+.selected-file svg {
+  color: var(--success);
+}
+
+.parsed-resume-field span,
+.focus-project-card-heading span,
+.preview-list dd.highlight,
+.session-list dd.highlight,
+.mastery-card > strong,
+.rank-card h3,
+.history-score,
+.mastery-meta strong,
+.challenge-copy strong,
+.insight-card.warning .insight-heading svg {
+  color: var(--accent);
+}
+
+.difficulty-card {
+  border-color: rgba(217, 77, 32, .16);
+  color: var(--text-soft);
+  background: rgba(255, 253, 248, .72);
+}
+
+.round-progress {
+  background: rgba(255, 244, 222, .72);
+  border-color: rgba(224, 128, 42, .16);
+}
+
+.round-step {
+  color: #9c8777;
+}
+
+.round-step.active {
+  color: var(--primary);
+}
+
+.round-step span {
+  background: rgba(255, 255, 255, .86);
+  border-color: rgba(224, 128, 42, .2);
+}
+
+.round-step.active span {
+  color: #fffdf8;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 0 20px rgba(245, 139, 32, .22);
+}
+
+.interviewer-portrait {
+  border-color: rgba(217, 77, 32, .2);
+  background:
+    linear-gradient(rgba(224, 128, 42, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 128, 42, .06) 1px, transparent 1px),
+    linear-gradient(150deg, rgba(255, 244, 222, .98), rgba(255, 230, 181, .8));
+}
+
+.voice-prototype {
+  border-color: rgba(217, 77, 32, .15);
+  color: #9f8170;
+  background: rgba(255, 243, 220, .68);
+}
+
+.prototype-feedback {
+  border-color: rgba(47, 138, 97, .24);
+  background: rgba(248, 255, 246, .82);
+}
+
+.feedback-icon {
+  color: var(--success);
+  background: rgba(47, 138, 97, .1);
+}
+
+.score-ring {
+  background:
+    radial-gradient(circle, #fffaf0 61%, transparent 63%),
+    conic-gradient(var(--accent) 0 84%, rgba(245, 139, 32, .15) 84% 100%);
+  box-shadow: 0 0 30px rgba(245, 139, 32, .16);
+}
+
+.score-ring span {
+  color: var(--muted);
+}
+
+.score-track,
+.profile-progress-track {
+  background: rgba(217, 77, 32, .1);
+}
+
+.score-track span,
+.profile-progress-track span {
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--gold));
+  box-shadow: 0 0 12px rgba(245, 139, 32, .24);
+}
+
+.volt-ai-card::after {
+  background: rgba(245, 139, 32, .18);
+}
+
+.insight-card li span {
+  background: var(--primary);
+  box-shadow: 0 0 8px rgba(217, 77, 32, .38);
+}
+
+.insight-card.warning li span,
+.tracker-card li span {
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(246, 191, 47, .44);
+}
+
+.electric-badge {
+  background: linear-gradient(145deg, rgba(255, 253, 248, .88), rgba(255, 234, 192, .72));
+}
+
+.history-head {
+  color: var(--primary-dark);
+  background: rgba(255, 232, 189, .58);
+}
+
+.access-loading p {
+  color: var(--primary);
+}
+
+.access-spinner {
+  border-color: rgba(217, 77, 32, .18);
+  border-top-color: var(--accent);
+  box-shadow: 0 0 24px rgba(245, 139, 32, .16);
+}
