@@ -177,12 +177,12 @@ function ResultsPage() {
         <header className="results-header">
           <div className="eyebrow">
             <Sparkles size={14} />
-            Prototype performance report
+            Performance report
           </div>
           <h1>No Report Yet</h1>
           <p>
             No completed interview found yet. Complete an interview to generate
-            your Volt AI report.
+            your Volt report.
           </p>
         </header>
 
@@ -216,10 +216,10 @@ function ResultsPage() {
       <header className="results-header">
         <div className="eyebrow">
           <Sparkles size={14} />
-          Prototype performance report
+          Performance report
         </div>
         <h1>Interview Complete</h1>
-        <p>Volt AI has generated your prototype performance report.</p>
+        <p>Your Volt recruiter-style performance report is ready.</p>
       </header>
 
       <div className="results-hero">
@@ -243,11 +243,11 @@ function ResultsPage() {
             <Bot size={35} />
           </motion.div>
           <div>
-            <p className="results-kicker">Volt AI</p>
-            <h2>Final Evaluation System</h2>
+            <p className="results-kicker">Volt Report</p>
+            <h2>Recruiter-Style Evaluation</h2>
             <blockquote>
-              “Your interview simulation is complete. Review your performance
-              breakdown and prepare for your next attempt.”
+              Your interview is complete. Review your performance breakdown and
+              prepare for your next attempt.
             </blockquote>
           </div>
         </motion.article>
@@ -339,7 +339,7 @@ function ResultsPage() {
           <aside className="glass-panel rank-card">
             <p>Current Rank</p>
             <h3>Circuit</h3>
-            <span>Prototype progression preview</span>
+            <span>Progression snapshot</span>
           </aside>
         </div>
       </section>
@@ -351,9 +351,9 @@ function ResultsPage() {
             <Award size={30} />
           </div>
           <div>
-            <span>Prototype unlocked badge</span>
+            <span>Unlocked badge</span>
             <h3>First Interview Completed</h3>
-            <p>This achievement is a visual preview and has not been saved.</p>
+            <p>This achievement marks your first completed Volt session.</p>
           </div>
         </article>
       </section>

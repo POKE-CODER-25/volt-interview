@@ -57,9 +57,9 @@ const achievements = [
 ]
 
 const history = [
-  ['Attempt 1', 'Student Mode', 'Fresher', '72', 'Prototype Date'],
-  ['Attempt 2', 'Resume Mode', 'Internship', '79', 'Prototype Date'],
-  ['Attempt 3', 'Resume Mode', 'Dream Company', '84', 'Prototype Date'],
+  ['Attempt 1', 'Student Mode', 'Fresher', '72', 'Recent'],
+  ['Attempt 2', 'Resume Mode', 'Internship', '79', 'Recent'],
+  ['Attempt 3', 'Resume Mode', 'Dream Company', '84', 'Recent'],
 ]
 
 const weaknesses = [
@@ -117,7 +117,7 @@ function ProfilePage() {
           ))}
         </div>
         <p className="profile-prototype-note">
-          Progress values shown here are prototype previews.
+          Progress updates as you complete interview sessions.
         </p>
       </article>
 
@@ -154,7 +154,7 @@ function ProfilePage() {
                 {index === 0 ? <Trophy size={22} /> : <Award size={22} />}
               </div>
               <span>{achievement}</span>
-              <small>Prototype badge</small>
+              <small>Volt badge</small>
             </article>
           ))}
         </div>
@@ -206,7 +206,7 @@ function ProfilePage() {
           <span>Today&apos;s Challenge</span>
           <h2>Explain OOP in 60 seconds.</h2>
           <p>
-            Prototype reward: <strong>+30 XP</strong>
+            Practice reward: <strong>+30 XP</strong>
           </p>
         </div>
         <button type="button" onClick={() => navigate('/interview')}>
