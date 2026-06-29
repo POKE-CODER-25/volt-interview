@@ -1,15 +1,11 @@
 import {
-  ArrowLeft,
   ArrowRight,
-  Clock3,
   Mic,
   MicOff,
-  Send,
   Square,
   UserRound,
   Volume2,
   VolumeX,
-  Zap,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
@@ -380,332 +376,180 @@ function InterviewPage() {
               }`}
               style={{
                 opacity: isLocked ? 0.48 : 1,
-                color: isCompleted ? '#79e6b5' : undefined,
               }}
             >
-              <span>{index + 1}</span>
+              <span />
               <strong>{round.round}</strong>
             </div>
           )
         })}
       </div>
 
-      <div className="interview-layout">
-        <main className="interview-main">
-          <motion.article
-            className="glass-panel interviewer-card"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-          >
+      <main className="interview-layout interview-focus-layout">
+        <motion.article
+          className="glass-panel interview-stage"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+        >
+          <aside className="interviewer-rail" aria-label="Interviewer controls">
             <motion.div
               className="interviewer-portrait"
               animate={{
                 boxShadow: [
-                  '0 0 22px rgba(245,230,66,.12)',
-                  '0 0 38px rgba(245,230,66,.24)',
-                  '0 0 22px rgba(245,230,66,.12)',
+                  '0 18px 42px rgba(255,122,0,.12)',
+                  '0 22px 56px rgba(255,179,0,.18)',
+                  '0 18px 42px rgba(255,122,0,.12)',
                 ],
               }}
-              transition={{ duration: 2.8, repeat: Infinity }}
+              transition={{ duration: 3.2, repeat: Infinity }}
             >
-              <UserRound size={48} />
+              <UserRound size={64} />
             </motion.div>
 
-            <div className="interviewer-copy">
-              <p className="interviewer-status">
-                <i />
-                Current interviewer
-              </p>
+            <div className="interviewer-identity">
               <h1>{currentRound.interviewer}</h1>
-              <p className="interviewer-title">{currentRound.title}</p>
-              <blockquote>
-                {presentedInterviewerDialogue}
-              </blockquote>
-              <span className="round-badge">{currentRound.badge}</span>
-              <div
-                className="answer-actions"
-                style={{ marginTop: 16, justifyContent: 'flex-start' }}
-              >
-                <button
-                  type="button"
-                  className="voice-prototype"
-                  onClick={playInterviewerVoice}
-                  disabled={!ttsSupported}
-                  style={{
-                    cursor: ttsSupported ? 'pointer' : 'not-allowed',
-                    opacity: ttsSupported ? 1 : 0.65,
-                  }}
-                >
-                  <Volume2 size={17} />
-                  Play Interviewer Voice
-                </button>
-                <button
-                  type="button"
-                  className="voice-prototype"
-                  onClick={stopInterviewerVoice}
-                  disabled={!ttsSupported || !interviewerSpeaking}
-                  style={{
-                    cursor:
-                      ttsSupported && interviewerSpeaking
-                        ? 'pointer'
-                        : 'not-allowed',
-                    opacity: ttsSupported && interviewerSpeaking ? 1 : 0.65,
-                  }}
-                >
-                  <VolumeX size={17} />
-                  Stop Voice
-                </button>
-              </div>
-              {!ttsSupported && (
-                <p
-                  role="status"
-                  style={{
-                    margin: '12px 0 0',
-                    color: '#f1b4b4',
-                    fontSize: 13,
-                  }}
-                >
-                  Text-to-speech is not supported in this browser.
-                </p>
-              )}
-              {ttsSupported && interviewerSpeaking && (
-                <p
-                  role="status"
-                  aria-live="polite"
-                  style={{
-                    margin: '12px 0 0',
-                    color: 'var(--yellow)',
-                    fontSize: 13,
-                  }}
-                >
-                  {currentRound.interviewer} is speaking...
-                </p>
-              )}
+              <p>{currentRound.title}</p>
             </div>
-          </motion.article>
 
-          <article className="glass-panel question-panel">
-            <header className="question-heading">
-              <div>
-                <p>
-                  {`Question ${currentQuestionIndex + 1} of ${questionCount}`}
-                </p>
+            <div className="interviewer-voice-actions">
+              <button
+                type="button"
+                className="voice-icon-button"
+                onClick={playInterviewerVoice}
+                disabled={!ttsSupported}
+                aria-label="Play interviewer voice"
+                title="Play interviewer voice"
+              >
+                <Volume2 size={20} />
+              </button>
+              <button
+                type="button"
+                className="voice-icon-button"
+                onClick={stopInterviewerVoice}
+                disabled={!ttsSupported || !interviewerSpeaking}
+                aria-label="Stop interviewer voice"
+                title="Stop interviewer voice"
+              >
+                <VolumeX size={20} />
+              </button>
+            </div>
+
+            {!ttsSupported && (
+              <p className="interview-status-message error" role="status">
+                Text-to-speech is not supported in this browser.
+              </p>
+            )}
+          </aside>
+
+          <div className="interview-conversation">
+            <article className="question-panel">
+              <p className="interviewer-dialogue">
+                {presentedInterviewerDialogue}
+              </p>
+              <header className="question-heading">
                 <h2>{presentedQuestionText}</h2>
-              </div>
-              <div className="prototype-timer" title="Static prototype timer">
-                <Clock3 size={18} />
-                <span>{currentRound.timer}</span>
-              </div>
-            </header>
+              </header>
+            </article>
 
-            <label className="answer-field">
-              <span>Your answer</span>
-              <textarea
-                value={answer}
-                onChange={(event) => {
-                  setAnswer(event.target.value)
-                  setSubmitStatus('')
-                }}
-                placeholder="Type your answer here, or use voice input..."
-                rows={7}
-              />
-            </label>
+            <section className="answer-card" aria-label="Answer area">
+              <label className="answer-field">
+                <textarea
+                  value={answer}
+                  onChange={(event) => {
+                    setAnswer(event.target.value)
+                    setSubmitStatus('')
+                  }}
+                  placeholder="Share your thoughts here..."
+                  rows={11}
+                />
+              </label>
 
-            <div className="answer-actions">
               <motion.button
                 type="button"
-                className="voice-prototype"
+                className={`answer-mic-button${listening ? ' listening' : ''}`}
                 onClick={listening ? stopVoice : startVoice}
                 disabled={!voiceSupported || starting}
+                aria-label={voiceButtonLabel}
                 aria-pressed={listening}
+                title={voiceButtonLabel}
                 animate={
                   listening
                     ? {
-                        scale: [1, 1.035, 1],
+                        scale: [1, 1.06, 1],
                         boxShadow: [
-                          '0 0 0 rgba(245,230,66,0)',
-                          '0 0 22px rgba(245,230,66,.25)',
-                          '0 0 0 rgba(245,230,66,0)',
+                          '0 10px 24px rgba(255,122,0,.16)',
+                          '0 14px 34px rgba(255,122,0,.28)',
+                          '0 10px 24px rgba(255,122,0,.16)',
                         ],
                       }
-                    : { scale: 1, boxShadow: '0 0 0 rgba(245,230,66,0)' }
+                    : { scale: 1 }
                 }
                 transition={
                   listening
                     ? { duration: 1.25, repeat: Infinity, ease: 'easeInOut' }
                     : { duration: 0.2 }
                 }
-                style={{
-                  cursor: voiceSupported && !starting ? 'pointer' : 'not-allowed',
-                  color: listening ? '#07101e' : '#d8e5f2',
-                  background: listening
-                    ? 'var(--yellow)'
-                    : 'rgba(255,255,255,.06)',
-                  borderColor: listening
-                    ? 'rgba(245,230,66,.75)'
-                    : 'rgba(255,255,255,.14)',
-                  opacity: voiceSupported ? 1 : 0.65,
-                }}
               >
                 {!voiceSupported ? (
-                  <MicOff size={17} />
+                  <MicOff size={18} />
                 ) : listening ? (
-                  <Square size={15} fill="currentColor" />
+                  <Square size={16} fill="currentColor" />
                 ) : (
-                  <Mic size={17} />
+                  <Mic size={18} />
                 )}
-                {voiceButtonLabel}
               </motion.button>
+            </section>
+
+            <div className="answer-actions interview-next-row">
               <button
                 type="button"
                 className="submit-answer"
                 onClick={submitAnswer}
               >
-                <Send size={17} />
-                Submit Answer
+                Next
+                <ArrowRight size={18} />
               </button>
             </div>
 
             {!voiceSupported && (
-              <p
-                role="status"
-                style={{ margin: '12px 0 0', color: '#f1b4b4', fontSize: 13 }}
-              >
+              <p className="interview-status-message error" role="status">
                 Voice input is not supported in this browser. Please use text
                 mode.
               </p>
             )}
 
             {voiceSupported && (starting || listening) && (
-              <p
-                role="status"
-                aria-live="polite"
-                style={{ margin: '12px 0 0', color: 'var(--yellow)', fontSize: 13 }}
-              >
-                Listening... speak your answer now
+              <p className="interview-status-message" role="status" aria-live="polite">
+                Listening...
               </p>
             )}
 
             {voiceError && (
-              <p
-                role="alert"
-                style={{ margin: '12px 0 0', color: '#f1b4b4', fontSize: 13 }}
-              >
+              <p className="interview-status-message error" role="alert">
                 {voiceError}
               </p>
             )}
 
-            {!voiceError && voiceStatus && !submitStatus && !voiceStatusCleared && (
-              <p
-                role="status"
-                aria-live="polite"
-                style={{
-                  margin: '12px 0 0',
-                  color: voiceStatus.startsWith('Voice captured')
-                    ? '#79e6b5'
-                    : '#f1b4b4',
-                  fontSize: 13,
-                }}
-              >
-                {voiceStatus}
-              </p>
-            )}
+            {!voiceError &&
+              voiceStatus &&
+              !submitStatus &&
+              !voiceStatusCleared &&
+              !voiceStatus.startsWith('Voice captured') && (
+                <p className="interview-status-message error" role="status" aria-live="polite">
+                  {voiceStatus}
+                </p>
+              )}
 
-            {submitStatus && (
-              <p
-                role="status"
-                aria-live="polite"
-                style={{
-                  margin: '12px 0 0',
-                  color: submitStatus.startsWith('Answer saved')
-                    ? '#79e6b5'
-                    : '#f1b4b4',
-                  fontSize: 13,
-                }}
-              >
+            {submitStatus && !submitStatus.startsWith('Answer saved') && (
+              <p className="interview-status-message error" role="status" aria-live="polite">
                 {submitStatus}
               </p>
             )}
-          </article>
-        </main>
-
-        <aside className="glass-panel session-panel">
-          <div className="session-heading">
-            <Zap size={20} fill="currentColor" />
-            <div>
-              <p>Interview Session</p>
-              <h2>Chamber active</h2>
-            </div>
           </div>
-
-          <dl className="session-list">
-            <SessionRow
-              label="Mode"
-              value={
-                interviewPlan.mode === 'resume'
-                  ? 'Resume Interview'
-                  : 'Student Interview'
-              }
-            />
-            <SessionRow label="Round" value={currentRound.round} highlight />
-            {interviewPlan.mode === 'resume' && (
-              <SessionRow
-                label="Primary Focus"
-                value={interviewFocus.primaryProject?.name || 'Not set'}
-              />
-            )}
-            {interviewPlan.mode === 'resume' &&
-              interviewFocus.secondaryProject?.name && (
-                <SessionRow
-                  label="Secondary Focus"
-                  value={interviewFocus.secondaryProject.name}
-                />
-              )}
-            <SessionRow
-              label="Difficulty"
-              value={setupData?.difficulty || 'Medium'}
-            />
-            <SessionRow label="Input" value="Text and voice enabled" />
-            <SessionRow label="Save" value="Not active in prototype" />
-          </dl>
-
-          <div className="session-note">
-            <span />
-            Prototype systems online
-          </div>
-        </aside>
-      </div>
-
-      <footer className="interview-controls">
-        <button
-          type="button"
-          className="button button-secondary"
-          onClick={() => navigate('/setup')}
-        >
-          <ArrowLeft size={17} />
-          Back to Setup
-        </button>
-        <button
-          type="button"
-          className="button button-primary"
-          disabled
-          title="Results unlock after the Project round is complete."
-        >
-          Results Locked
-          <ArrowRight size={17} />
-        </button>
-      </footer>
+        </motion.article>
+      </main>
     </section>
-  )
-}
-
-function SessionRow({ label, value, highlight = false }) {
-  return (
-    <div>
-      <dt>{label}</dt>
-      <dd className={highlight ? 'highlight' : ''}>{value}</dd>
-    </div>
   )
 }
 

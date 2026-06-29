@@ -2144,3 +2144,1060 @@ strong {
   border-top-color: var(--accent);
   box-shadow: 0 0 24px rgba(245, 139, 32, .16);
 }
+
+/* Phase 5A.1: luxury glass system refinement */
+:root {
+  --bg: #fff9f2;
+  --bg-secondary: #fff4e8;
+  --glass-card: rgba(255, 255, 255, .82);
+  --glass-nav: rgba(255, 255, 255, .72);
+  --primary: #ff7a00;
+  --secondary: #ffb300;
+  --accent: #ff5a36;
+  --text: #1f1a17;
+  --text-soft: #403832;
+  --muted: #6c655e;
+  --border-warm: rgba(255, 160, 60, .18);
+  --glass-border: rgba(255, 255, 255, .65);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, .74);
+  --shadow-sm: 0 1px 2px rgba(92, 45, 12, .05);
+  --shadow-md: 0 14px 34px rgba(181, 86, 18, .12);
+  --shadow-lg: 0 34px 90px rgba(116, 52, 8, .14);
+  --shadow-glow: 0 0 42px rgba(255, 122, 0, .12);
+}
+
+body {
+  color: var(--text);
+  background:
+    radial-gradient(circle at 7% 4%, rgba(255, 122, 0, .22), transparent 34rem),
+    radial-gradient(circle at 91% 2%, rgba(255, 179, 0, .18), transparent 31rem),
+    radial-gradient(circle at 0% 94%, rgba(255, 90, 54, .12), transparent 30rem),
+    radial-gradient(circle at 50% 46%, rgba(255, 244, 232, .96), rgba(255, 249, 242, .52) 28rem, transparent 54rem),
+    linear-gradient(145deg, var(--bg) 0%, var(--bg-secondary) 48%, #fffdf9 100%);
+}
+
+body::before {
+  opacity: .32;
+  background-image:
+    linear-gradient(rgba(255, 160, 60, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 160, 60, .06) 1px, transparent 1px);
+  background-size: 68px 68px;
+}
+
+.navbar {
+  border-bottom: 1px solid rgba(255, 160, 60, .2);
+  background: var(--glass-nav);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 14px 44px rgba(116, 52, 8, .1);
+  backdrop-filter: blur(22px) saturate(1.18);
+  animation: luxury-fade .5s ease both;
+}
+
+.navbar-inner {
+  height: 74px;
+}
+
+.brand {
+  letter-spacing: .08em;
+}
+
+.brand strong,
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary);
+}
+
+.nav-link {
+  color: var(--muted);
+}
+
+.nav-link,
+.logout-button,
+.button,
+.auth-submit,
+.analyze-resume-button,
+.confirm-focus-button,
+.start-interview-button,
+.submit-answer,
+.daily-challenge button,
+.upload-button,
+.mode-card button,
+.focus-choice-row button,
+.add-project-button,
+.auth-toggle button,
+.difficulty-card {
+  transition:
+    transform 250ms ease,
+    box-shadow 250ms ease,
+    border-color 250ms ease,
+    background 250ms ease,
+    color 250ms ease,
+    opacity 250ms ease;
+}
+
+.glass-panel,
+.auth-card,
+.character-panel,
+.placeholder-card,
+.mode-card,
+.resume-upload,
+.parsed-resume-preview,
+.resume-focus-editor,
+.student-fields,
+.setup-preview,
+.interviewer-card,
+.question-panel,
+.session-panel,
+.volt-ai-card,
+.overall-score-card,
+.score-card,
+.insight-card,
+.mastery-card,
+.rank-card,
+.achievement-card,
+.user-overview,
+.profile-mastery-card,
+.history-card,
+.tracker-card,
+.daily-challenge {
+  border: 1px solid var(--glass-border);
+  border-radius: 26px;
+  background: var(--glass-card);
+  box-shadow: var(--glass-inset), var(--shadow-sm), var(--shadow-md), var(--shadow-lg), var(--shadow-glow);
+  backdrop-filter: blur(18px) saturate(1.2);
+  animation: luxury-fade-up .55s ease both;
+}
+
+.session-panel,
+.setup-preview {
+  box-shadow:
+    var(--glass-inset),
+    0 2px 8px rgba(92, 45, 12, .06),
+    0 22px 55px rgba(181, 86, 18, .16),
+    0 42px 110px rgba(116, 52, 8, .16),
+    0 0 48px rgba(255, 122, 0, .14);
+}
+
+.character-card,
+.parsed-resume-field,
+.focus-project-card,
+.overview-stats > div,
+.electric-badge,
+.auth-toggle,
+.round-progress {
+  border: 1px solid rgba(255, 255, 255, .64);
+  background: rgba(255, 255, 255, .58);
+  box-shadow: var(--glass-inset), 0 10px 28px rgba(181, 86, 18, .08);
+  backdrop-filter: blur(14px);
+}
+
+.hero-section,
+.auth-section,
+.setup-page,
+.interview-page,
+.results-page,
+.profile-page,
+.placeholder-section {
+  padding-top: clamp(56px, 7vw, 88px);
+  padding-bottom: clamp(66px, 8vw, 96px);
+}
+
+.hero-grid,
+.auth-section,
+.setup-layout,
+.interview-layout,
+.results-hero,
+.tracker-grid {
+  gap: clamp(24px, 4vw, 58px);
+}
+
+.auth-card,
+.character-panel,
+.setup-preview,
+.session-panel {
+  padding: 30px;
+}
+
+.mode-card,
+.resume-upload,
+.parsed-resume-preview,
+.resume-focus-editor,
+.student-fields,
+.question-panel,
+.volt-ai-card,
+.overall-score-card,
+.achievement-card,
+.user-overview,
+.daily-challenge {
+  padding: clamp(24px, 3vw, 32px);
+}
+
+.hero-copy h1,
+.auth-intro h1,
+.setup-header h1,
+.results-header h1,
+.profile-header h1,
+.placeholder-card h1 {
+  color: var(--text);
+  font-weight: 900;
+  letter-spacing: -.055em;
+}
+
+.question-heading h2,
+.panel-heading h2,
+.auth-heading h2,
+.setup-section-heading h2,
+.session-heading h2,
+.results-section-heading h2,
+.profile-section-heading h2 {
+  color: var(--text);
+  font-weight: 850;
+  letter-spacing: -.025em;
+}
+
+.hero-copy h1 span,
+.auth-intro h1 span {
+  background: linear-gradient(100deg, var(--accent) 0%, var(--primary) 46%, var(--secondary) 100%);
+  background-clip: text;
+}
+
+.description,
+.placeholder-card p,
+.auth-intro > p:last-child,
+.setup-header > p,
+.results-header > p,
+.profile-header > p,
+.mode-card p,
+.resume-upload p,
+.character-card p,
+.session-list dt,
+.score-card p,
+.insight-card li,
+.tracker-card li {
+  color: var(--muted);
+}
+
+.button,
+.auth-submit,
+.analyze-resume-button,
+.confirm-focus-button,
+.start-interview-button,
+.submit-answer,
+.daily-challenge button,
+.upload-button,
+.mode-card button,
+.focus-choice-row button,
+.add-project-button {
+  border-radius: 18px;
+}
+
+.button-primary,
+.auth-submit,
+.analyze-resume-button,
+.confirm-focus-button,
+.start-interview-button,
+.submit-answer,
+.daily-challenge button,
+.mode-card.selected button,
+.focus-choice-row button.selected {
+  border: 0;
+  color: #fffaf4;
+  background: linear-gradient(180deg, var(--secondary) 0%, var(--primary) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .36),
+    0 12px 26px rgba(255, 122, 0, .24),
+    0 0 28px rgba(255, 179, 0, .18);
+}
+
+.button-primary:hover,
+.auth-submit:hover,
+.analyze-resume-button:hover,
+.confirm-focus-button:hover,
+.start-interview-button:hover,
+.submit-answer:hover,
+.daily-challenge button:hover,
+.mode-card.selected button:hover,
+.focus-choice-row button.selected:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .42),
+    0 18px 38px rgba(255, 122, 0, .31),
+    0 0 42px rgba(255, 179, 0, .24);
+}
+
+.button-secondary,
+.logout-button,
+.upload-button,
+.mode-card button,
+.focus-choice-row button,
+.add-project-button,
+.results-home-button {
+  border: 1px solid rgba(255, 122, 0, .28);
+  color: #7c3b04;
+  background: rgba(255, 255, 255, .68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .74), 0 9px 20px rgba(181, 86, 18, .08);
+  backdrop-filter: blur(14px);
+}
+
+.button-secondary:hover,
+.logout-button:hover,
+.upload-button:hover,
+.mode-card button:hover,
+.focus-choice-row button:hover,
+.add-project-button:hover,
+.results-home-button:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 244, 232, .86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 14px 30px rgba(181, 86, 18, .12);
+}
+
+.auth-field input,
+.focus-field input,
+.focus-field textarea,
+.setup-select select,
+.answer-field textarea {
+  border: 1px solid rgba(255, 160, 60, .2);
+  border-radius: 18px;
+  color: var(--text);
+  background: rgba(255, 255, 255, .68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 10px 28px rgba(181, 86, 18, .06);
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    background 250ms ease,
+    transform 250ms ease;
+}
+
+.auth-field input::placeholder,
+.focus-field input::placeholder,
+.focus-field textarea::placeholder,
+.answer-field textarea::placeholder {
+  color: rgba(108, 101, 94, .68);
+}
+
+.auth-field input:focus,
+.focus-field input:focus,
+.focus-field textarea:focus,
+.setup-select select:focus,
+.answer-field textarea:focus {
+  outline: 0;
+  border-color: rgba(255, 122, 0, .5);
+  background: rgba(255, 255, 255, .84);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .86),
+    0 0 0 4px rgba(255, 122, 0, .12),
+    0 16px 34px rgba(181, 86, 18, .1);
+}
+
+.eyebrow,
+.placeholder-eyebrow,
+.auth-intro > p:first-child,
+.auth-heading p,
+.panel-heading p,
+.setup-section-heading span,
+.parsed-resume-heading p,
+.resume-focus-heading p,
+.preview-label,
+.interviewer-status,
+.round-badge,
+.question-heading span,
+.session-heading p,
+.results-kicker,
+.prototype-tag,
+.achievement-card span,
+.profile-identity span,
+.challenge-copy > span {
+  border-radius: 999px;
+  color: #9a4700 !important;
+  border: 1px solid rgba(255, 160, 60, .22);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .74), rgba(255, 244, 232, .68));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 8px 22px rgba(255, 122, 0, .08);
+}
+
+.brand-icon,
+.placeholder-icon,
+.profile-avatar,
+.achievement-badge,
+.challenge-icon,
+.character-icon,
+.mode-icon,
+.setup-section-heading span,
+.preview-orbit,
+.volt-ai-icon,
+.mastery-icon,
+.profile-mastery-icon,
+.feedback-icon {
+  border-radius: 999px;
+  color: var(--primary);
+  border: 1px solid rgba(255, 122, 0, .2);
+  background: rgba(255, 255, 255, .62);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 10px 26px rgba(255, 122, 0, .12);
+  backdrop-filter: blur(12px);
+}
+
+.mode-card.selected,
+.difficulty-card.selected,
+.resume-upload.dragging,
+.overall-score-card,
+.rank-card,
+.achievement-card,
+.daily-challenge {
+  border-color: rgba(255, 255, 255, .78);
+  box-shadow:
+    var(--glass-inset),
+    0 2px 8px rgba(92, 45, 12, .06),
+    0 22px 55px rgba(255, 122, 0, .16),
+    0 44px 110px rgba(116, 52, 8, .14),
+    0 0 52px rgba(255, 179, 0, .16);
+}
+
+.difficulty-card {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .66);
+  backdrop-filter: blur(14px);
+}
+
+.score-ring {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, .88) 60%, transparent 62%),
+    conic-gradient(var(--primary) 0 84%, rgba(255, 160, 60, .16) 84% 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .84),
+    0 18px 36px rgba(255, 122, 0, .16),
+    0 0 42px rgba(255, 179, 0, .16);
+}
+
+.score-track,
+.profile-progress-track {
+  background: rgba(255, 160, 60, .14);
+}
+
+.score-track span,
+.profile-progress-track span {
+  background: linear-gradient(90deg, var(--accent), var(--primary), var(--secondary));
+  box-shadow: 0 0 14px rgba(255, 122, 0, .28);
+}
+
+.round-step span {
+  border-color: rgba(255, 160, 60, .22);
+  background: rgba(255, 255, 255, .76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78), 0 8px 20px rgba(181, 86, 18, .08);
+}
+
+.round-step.active span {
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  box-shadow: 0 14px 28px rgba(255, 122, 0, .22), 0 0 28px rgba(255, 179, 0, .18);
+}
+
+.interviewer-portrait {
+  border-color: rgba(255, 255, 255, .7);
+  background:
+    radial-gradient(circle at 35% 18%, rgba(255, 179, 0, .16), transparent 42%),
+    radial-gradient(circle at 78% 12%, rgba(255, 90, 54, .1), transparent 38%),
+    linear-gradient(150deg, rgba(255, 255, 255, .78), rgba(255, 244, 232, .72));
+  box-shadow: var(--glass-inset), 0 18px 44px rgba(181, 86, 18, .12);
+  backdrop-filter: blur(14px);
+}
+
+.voice-prototype {
+  border-radius: 18px;
+  border-color: rgba(255, 160, 60, .18);
+  background: rgba(255, 255, 255, .56);
+}
+
+.auth-toggle {
+  border-radius: 18px;
+  padding: 5px;
+}
+
+.auth-toggle button {
+  border-radius: 14px;
+}
+
+.auth-toggle button.active {
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  box-shadow: 0 10px 24px rgba(255, 122, 0, .2);
+}
+
+.history-head {
+  background: rgba(255, 244, 232, .66);
+}
+
+.glass-panel:hover,
+.mode-card:hover,
+.score-card:hover,
+.insight-card:hover,
+.mastery-card:hover,
+.profile-mastery-card:hover,
+.electric-badge:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--glass-inset),
+    var(--shadow-sm),
+    0 18px 42px rgba(181, 86, 18, .14),
+    0 38px 100px rgba(116, 52, 8, .15),
+    0 0 50px rgba(255, 122, 0, .14);
+}
+
+.glass-panel,
+.mode-card,
+.score-card,
+.insight-card,
+.mastery-card,
+.profile-mastery-card,
+.electric-badge {
+  transition:
+    transform 250ms ease,
+    box-shadow 250ms ease,
+    border-color 250ms ease,
+    background 250ms ease;
+}
+
+@keyframes luxury-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes luxury-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .navbar-inner {
+    height: 68px;
+  }
+
+  .auth-card,
+  .character-panel,
+  .setup-preview,
+  .session-panel {
+    padding: 24px;
+  }
+}
+
+/* Phase 5B: focused interview page layout */
+.interview-page {
+  max-width: 1120px;
+  margin: auto;
+  padding: clamp(30px, 5vw, 56px) 24px clamp(56px, 7vw, 86px);
+}
+
+.interview-page .round-progress {
+  width: min(420px, 100%);
+  margin: 0 auto 28px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.interview-page .round-step {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: rgba(31, 26, 23, .45);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.interview-page .round-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: calc(50% + 13px);
+  width: calc(100% - 26px);
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 160, 60, .18);
+}
+
+.interview-page .round-step.completed:not(:last-child)::after,
+.interview-page .round-step.active:not(:last-child)::after {
+  background: linear-gradient(90deg, var(--primary), rgba(255, 179, 0, .45));
+}
+
+.interview-page .round-step span {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 160, 60, .24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .86), 0 8px 18px rgba(181, 86, 18, .08);
+}
+
+.interview-page .round-step.active span,
+.interview-page .round-step.completed span {
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  box-shadow: 0 10px 22px rgba(255, 122, 0, .2);
+}
+
+.interview-page .round-step strong {
+  color: inherit;
+  font-size: 10px;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.interview-page .round-step.active {
+  color: var(--text);
+}
+
+.interview-page .round-step.completed {
+  color: var(--primary);
+}
+
+.interview-focus-layout {
+  display: block;
+  margin: 0;
+}
+
+.interview-stage {
+  min-height: min(720px, calc(100vh - 190px));
+  padding: clamp(26px, 4vw, 44px);
+  display: grid;
+  grid-template-columns: minmax(190px, .3fr) minmax(0, .7fr);
+  gap: clamp(28px, 5vw, 58px);
+  align-items: stretch;
+}
+
+.interviewer-rail {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 22px;
+}
+
+.interview-page .interviewer-portrait {
+  width: min(220px, 100%);
+  height: auto;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 44px;
+  color: var(--primary);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 179, 0, .18), transparent 36%),
+    radial-gradient(circle at 76% 16%, rgba(255, 90, 54, .12), transparent 38%),
+    rgba(255, 255, 255, .72);
+}
+
+.interview-page .interviewer-portrait svg {
+  width: clamp(56px, 8vw, 86px);
+  height: clamp(56px, 8vw, 86px);
+  stroke-width: 1.5;
+}
+
+.interviewer-voice-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.voice-icon-button,
+.answer-mic-button {
+  width: 50px;
+  height: 50px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(255, 122, 0, .2);
+  border-radius: 999px;
+  color: var(--primary);
+  background: rgba(255, 255, 255, .68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 12px 26px rgba(181, 86, 18, .1);
+  backdrop-filter: blur(14px);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease,
+    opacity 220ms ease;
+}
+
+.voice-icon-button:hover,
+.answer-mic-button:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 244, 232, .9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .86), 0 16px 34px rgba(255, 122, 0, .16);
+}
+
+.voice-icon-button:disabled,
+.answer-mic-button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+  transform: none;
+}
+
+.interview-conversation {
+  display: grid;
+  grid-template-rows: auto minmax(300px, 1fr) auto auto;
+  gap: 22px;
+}
+
+.interview-page .question-panel {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.interview-page .question-heading {
+  display: block;
+}
+
+.interview-page .question-heading h2 {
+  max-width: 790px;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(30px, 4.4vw, 52px);
+  font-weight: 900;
+  letter-spacing: -.045em;
+  line-height: 1.08;
+}
+
+.answer-card {
+  position: relative;
+  min-height: 340px;
+  display: grid;
+  border: 1px solid rgba(255, 255, 255, .68);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, .74);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .84),
+    0 16px 40px rgba(181, 86, 18, .11),
+    0 34px 86px rgba(116, 52, 8, .1);
+  backdrop-filter: blur(18px) saturate(1.15);
+}
+
+.interview-page .answer-field {
+  min-height: 100%;
+  margin: 0;
+  display: grid;
+}
+
+.interview-page .answer-field textarea {
+  min-height: 100%;
+  padding: 30px 82px 30px 30px;
+  border: 0;
+  border-radius: 30px;
+  color: var(--text);
+  background: transparent;
+  box-shadow: none;
+  font-size: clamp(17px, 1.6vw, 20px);
+  line-height: 1.75;
+  resize: vertical;
+}
+
+.interview-page .answer-field textarea:focus {
+  box-shadow: 0 0 0 4px rgba(255, 122, 0, .1);
+}
+
+.interview-page .answer-field textarea::placeholder {
+  color: rgba(108, 101, 94, .62);
+}
+
+.answer-mic-button {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+}
+
+.answer-mic-button.listening {
+  color: #fffaf4;
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+}
+
+.interview-next-row {
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.interview-next-row .submit-answer {
+  min-width: 132px;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 18px;
+  font-size: 15px;
+}
+
+.interview-status-message {
+  margin: -4px 0 0;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.interview-status-message.error {
+  color: var(--danger);
+}
+
+@media (max-width: 900px) {
+  .interview-stage {
+    grid-template-columns: minmax(150px, .32fr) minmax(0, .68fr);
+    gap: 28px;
+  }
+
+  .interview-page .interviewer-portrait {
+    border-radius: 34px;
+  }
+}
+
+@media (max-width: 720px) {
+  .interview-page {
+    padding-inline: 18px;
+  }
+
+  .interview-stage {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .interviewer-rail {
+    align-content: start;
+  }
+
+  .interview-page .interviewer-portrait {
+    width: 150px;
+    border-radius: 30px;
+  }
+
+  .interview-conversation {
+    grid-template-rows: auto minmax(300px, auto) auto auto;
+  }
+
+  .interview-page .question-heading h2 {
+    text-align: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .interview-page .round-progress {
+    margin-bottom: 22px;
+  }
+
+  .interview-stage {
+    padding: 22px;
+  }
+
+  .interview-page .question-heading h2 {
+    font-size: 28px;
+  }
+
+  .answer-card {
+    min-height: 320px;
+  }
+
+  .interview-page .answer-field textarea {
+    padding: 24px 72px 24px 24px;
+  }
+
+  .interview-next-row .submit-answer {
+    width: 100%;
+  }
+}
+
+/* Phase 5B.1: final interview polish */
+.navbar-inner {
+  height: 59px;
+}
+
+.interview-page {
+  max-width: 1080px;
+  padding-top: clamp(24px, 4vw, 42px);
+}
+
+.interview-page .round-progress {
+  margin-bottom: 24px;
+}
+
+.interview-stage {
+  width: min(1040px, 100%);
+  min-height: min(760px, calc(100vh - 155px));
+  margin: 0 auto;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: clamp(34px, 4vw, 52px);
+  align-items: center;
+}
+
+.interviewer-rail {
+  align-content: center;
+  gap: 18px;
+}
+
+.interview-page .interviewer-portrait {
+  width: min(210px, 100%);
+  border: 1px solid rgba(255, 160, 60, .24);
+  border-radius: 38px;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 179, 0, .24), transparent 38%),
+    radial-gradient(circle at 74% 18%, rgba(255, 90, 54, .15), transparent 38%),
+    rgba(255, 255, 255, .76);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .86),
+    0 18px 44px rgba(255, 122, 0, .15),
+    0 0 44px rgba(255, 179, 0, .12);
+}
+
+.interviewer-identity {
+  max-width: 230px;
+  text-align: center;
+}
+
+.interviewer-identity h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -.025em;
+  line-height: 1.1;
+}
+
+.interviewer-identity p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.voice-icon-button,
+.answer-mic-button {
+  width: 48px;
+  height: 48px;
+}
+
+.voice-icon-button:hover,
+.answer-mic-button:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .86),
+    0 14px 32px rgba(255, 122, 0, .2),
+    0 0 26px rgba(255, 122, 0, .16);
+}
+
+.interview-conversation {
+  grid-template-rows: auto minmax(420px, 1fr) auto auto;
+  gap: 20px;
+}
+
+.interviewer-dialogue {
+  max-width: 720px;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.interview-page .question-heading h2 {
+  max-width: 720px;
+  font-size: clamp(24px, 3.2vw, 39px);
+  line-height: 1.14;
+}
+
+.answer-card {
+  min-height: 425px;
+  border-radius: 32px;
+}
+
+.interview-page .answer-field textarea {
+  padding: 32px 84px 32px 32px;
+  border-radius: 32px;
+}
+
+.interview-next-row {
+  justify-content: center;
+}
+
+.interview-next-row .submit-answer {
+  width: clamp(180px, 22vw, 220px);
+  min-height: 54px;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--secondary) 0%, var(--primary) 100%);
+}
+
+@media (max-width: 900px) {
+  .interview-stage {
+    grid-template-columns: minmax(190px, 240px) minmax(0, 1fr);
+    gap: 30px;
+  }
+
+  .interview-page .question-heading h2 {
+    font-size: clamp(24px, 3.8vw, 34px);
+  }
+}
+
+@media (max-width: 720px) {
+  .interview-stage {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .interview-conversation {
+    width: 100%;
+    grid-template-rows: auto minmax(380px, auto) auto auto;
+  }
+
+  .interviewer-dialogue,
+  .interview-page .question-heading h2 {
+    margin-inline: auto;
+    text-align: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .navbar-inner {
+    height: 54px;
+  }
+
+  .interview-page .interviewer-portrait {
+    width: 146px;
+    border-radius: 28px;
+  }
+
+  .interviewer-identity h1 {
+    font-size: 20px;
+  }
+
+  .interview-page .question-heading h2 {
+    font-size: 24px;
+  }
+
+  .answer-card {
+    min-height: 390px;
+  }
+
+  .interview-next-row .submit-answer {
+    width: min(220px, 100%);
+  }
+}
